@@ -7,14 +7,16 @@ import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Bot extends TelegramLongPollingBot {
-
+    private InlineKeyboardMarkup  menu_find;
     Tg_Token token = new Tg_Token();
 
     public static void main(String[] args) throws TelegramApiException {
@@ -26,15 +28,15 @@ public class Bot extends TelegramLongPollingBot {
                 new InputFile("https://i.pinimg.com/originals/a1/57/e3/a157e33152dbf0d9da5627b28a070bd6.jpg"));
     }
 
+
     @Override
     public void onUpdateReceived(Update update) {
         var message = update.getMessage();
         var user = message.getFrom();
         var id = user.getId();
-
-        System.out.println(update.hasCallbackQuery());
-
+        createMenu();
         if(update.hasCallbackQuery()) {
+
             String call_data = update.getCallbackQuery().getData();
             System.out.println(update.getCallbackQuery().getData());
 
@@ -43,55 +45,55 @@ public class Bot extends TelegramLongPollingBot {
             }
         }
 
-        if(message.isCommand()){
-            switch (message.getText()){
-                case "/find" :
-                    sendMenu(id);
+        switch (message.getText()){
+
+                    case "/find" :
+                    sendMenu(id, menu_find);
                     break;
 
-                case "/add" :
+                    case "/add" :
                     sendText(id, "Тут будет добавление рецептов");
                     break;
 
-                case "/login" :
+                    case "/login" :
                     sendText(id, "Тут будет вход");
                     break;
 
-                case "/register" :
+                    case "/register" :
                     sendText(id, "Тут будет регистрация");
-                    break;
-                default: break;
-            }
+                    break; default: break;
         }
-        else
-            copyMessage(id, message.getMessageId());
-
     }
 
     ///////////////////////////////////////////////////////////////////
-    public void sendMenu(Long User_id){
+    public void sendMenu(Long id, InlineKeyboardMarkup menu_keyboard){
         String txt = "<b>Рицепт чего хотите найти?</b>";
 
-        InlineKeyboardButton back = InlineKeyboardButton.builder()
-                .text("Назад").callbackData("back")
-                .build();
-        InlineKeyboardButton drinks = InlineKeyboardButton.builder()
-                .text("Напитки").callbackData("drink").build();
-        InlineKeyboardButton food = InlineKeyboardButton.builder()
-                .text("Еда").callbackData("food").build();
-        InlineKeyboardMarkup menu_keyboard = InlineKeyboardMarkup.builder()
-                .keyboardRow(List.of(drinks, food))
-                .keyboardRow(List.of(back))
-                .build();
-
-        SendMessage menu = SendMessage.builder().chatId(User_id.toString())
-                .parseMode("HTML").text(txt)
-                .replyMarkup(menu_keyboard).build();
+        SendMessage message = SendMessage.builder()
+                .chatId(id.toString())
+                .text(txt).replyMarkup(menu_keyboard).
+                build();
         try {
-            execute(menu);
+            execute(message);
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void createMenu(){
+        var back = InlineKeyboardButton.builder()
+                .text("Назад").callbackData("back").build();
+
+        var drinks = InlineKeyboardButton.builder()
+                .text("Напитки").callbackData("drink").build();
+
+        var food = InlineKeyboardButton.builder()
+                .text("Еда").callbackData("food").build();
+
+        menu_find = InlineKeyboardMarkup.builder()
+                .keyboardRow(List.of(drinks, food))
+                .keyboardRow(List.of(back))
+                .build();
     }
 
     public void copyMessage(Long who, Integer msgId){
