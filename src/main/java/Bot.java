@@ -29,7 +29,9 @@ public class Bot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        createFindMenu();
+        createMenu();
+        var message = update.getMessage();
+
         if(update.hasCallbackQuery()) {
             CallbackQuery callbackQuery = update.getCallbackQuery();
             String call_data = update.getCallbackQuery().getData();
@@ -39,6 +41,7 @@ public class Bot extends TelegramLongPollingBot {
             switch (call_data) {
                 case "food":
                     sendText(chatId, "Тут будет еда");
+
                     return;
 
                 case "drink":
@@ -54,10 +57,10 @@ public class Bot extends TelegramLongPollingBot {
             }
             return;
         }
-        var message = update.getMessage();
         var user = message.getFrom();
         var id = user.getId();
         switch (message.getText()){
+
                     case "/find" :
                     sendMenu(id, menu, "<b>Рицепт чего хотите найти?</b>");
                     return;
@@ -91,7 +94,7 @@ public class Bot extends TelegramLongPollingBot {
         }
     }
 
-    public void createFindMenu(){
+    public void createMenu(){
         var back = InlineKeyboardButton.builder()
                 .text("Назад").callbackData("back").build();
 
