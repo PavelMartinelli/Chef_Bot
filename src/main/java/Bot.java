@@ -21,11 +21,7 @@ public class Bot extends TelegramLongPollingBot {
         TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
         Bot bot = new Bot();
         botsApi.registerBot(bot);
-        bot.sendText(798230948L, "Доброе утро");
-        bot.sendPhoto(798230948L,
-                new InputFile("https://yandex.ru/images/search?from=tabbar&img_url=http%3A%2F%2Fi.pinimg.com%2F736x%2Fac%2F69%2F84%2Fac6984675570e6d5f6557e0c325a7487.jpg&lr=54&pos=1&rpt=simage&text=%D0%B5%D0%B4%D0%B0%20%D1%80%D0%BE%D0%B1%D0%BE%D1%82"));
     }
-
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -36,7 +32,7 @@ public class Bot extends TelegramLongPollingBot {
             CallbackQuery callbackQuery = update.getCallbackQuery();
             String call_data = update.getCallbackQuery().getData();
             System.out.println(update.getCallbackQuery().getData());
-            long chatId = callbackQuery.getMessage().getChatId();
+            /*long chatId = callbackQuery.getMessage().getChatId();
 
             switch (call_data) {
                 case "food":
@@ -54,7 +50,7 @@ public class Bot extends TelegramLongPollingBot {
 
                 default:
                     return;
-            }
+            }*/
             return;
         }
         var user = message.getFrom();
