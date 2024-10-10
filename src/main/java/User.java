@@ -1,12 +1,15 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 
-public class UserState {
+public class User {
     private final Long id;
     private String userName;
     private String password;
     private String state;
+    private ArrayList<Recipe> favoriteRecipes;
+    private ArrayList<Recipe> createdRecipes;
 
-    public UserState(Long id, String userName, String password) {
+    public User(Long id, String userName, String password) {
         this.id = id;
         this.userName = userName;
         this.password = password;
