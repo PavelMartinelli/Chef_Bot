@@ -11,6 +11,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Bot extends TelegramLongPollingBot {
@@ -135,6 +136,14 @@ public class Bot extends TelegramLongPollingBot {
         SendPhoto sm = SendPhoto.builder()
                 .chatId(who.toString()).photo(what)
                 .build();
+        try {
+            execute(sm);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void sendPhoto(SendPhoto sm){ // метод обертка для отправки чтобы убрать try/catch
         try {
             execute(sm);
         } catch (TelegramApiException e) {

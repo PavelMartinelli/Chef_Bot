@@ -6,8 +6,6 @@ public class User {
     private String userName;
     private String password;
     private String state;
-    private ArrayList<Recipe> favoriteRecipes;
-    private ArrayList<Recipe> createdRecipes;
 
     public User(Long id, String userName, String password) {
         this.id = id;

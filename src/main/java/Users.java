@@ -8,6 +8,15 @@ public class Users {
         this.usersDictonary = usersDictonary;
     }
 
+    public User getUser(Long userId) {
+        return usersDictonary.get(userId);
+    }
+    public void dellUser(Long userId) {
+        usersDictonary.remove(userId);
+
+        //TO DO: Сделать удаление пользователя из базы данных
+    }
+
     public void addUser(User user) {
         usersDictonary.put(user.getId(), user);
 
