@@ -41,18 +41,15 @@ public class Bot extends TelegramLongPollingBot {
         }
     }
 
-    public void sendPhoto(Long who, InputFile what){
-        SendPhoto sm = SendPhoto.builder()
-                .chatId(who.toString()).photo(what)
-                .build();
+
+    public void send(SendPhoto sm){ // метод обертка для отправки чтобы убрать try/catch
         try {
             execute(sm);
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }
     }
-
-    public void sendPhoto(SendPhoto sm){ // метод обертка для отправки чтобы убрать try/catch
+    public void send(SendMessage sm){ // метод обертка для отправки чтобы убрать try/catch
         try {
             execute(sm);
         } catch (TelegramApiException e) {
