@@ -11,6 +11,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Bot extends TelegramLongPollingBot {
@@ -25,101 +26,10 @@ public class Bot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        createMenu();
-        var message = update.getMessage();
 
-        if(update.hasCallbackQuery()) {
-            CallbackQuery callbackQuery = update.getCallbackQuery();
-            String call_data = update.getCallbackQuery().getData();
-            System.out.println(update.getCallbackQuery().getData());
-            /*long chatId = callbackQuery.getMessage().getChatId();
-
-            switch (call_data) {
-                case "food":
-                    sendText(chatId, "Тут будет еда");
-
-                    return;
-
-                case "drink":
-                    sendText(chatId, "Тут будут напитки");
-                    break;
-
-                case "back":
-                    sendText(chatId, "Тут будет выход");
-                    break;
-
-                default:
-                    return;
-            }*/
-            return;
-        }
-        var user = message.getFrom();
-        var id = user.getId();
-        switch (message.getText()){
-
-                    case "/find" :
-                    sendMenu(id, menu, "<b>Рицепт чего хотите найти?</b>");
-                    return;
-
-                    case "/add" :
-                        sendMenu(id, menu, "<b>Рицепт чего хотите добавить?</b>");
-                    break;
-
-                    case "/login" :
-                    sendText(id, "Тут будет вход");
-                    break;
-
-                    case "/register" :
-                    sendText(id, "Тут будет регистрация");
-                    break;
-                    default: return;
-        }
     }
 
     ///////////////////////////////////////////////////////////////////
-    public void sendMenu(Long id, InlineKeyboardMarkup menu_keyboard, String txt){
-
-        SendMessage message = SendMessage.builder()
-                .chatId(id.toString()).parseMode("HTML")
-                .text(txt).replyMarkup(menu_keyboard).
-                build();
-        try {
-            execute(message);
-        } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void createMenu(){
-        var back = InlineKeyboardButton.builder()
-                .text("Назад").callbackData("back").build();
-
-        var drinks = InlineKeyboardButton.builder()
-                .text("Напитки").callbackData("drink").build();
-
-        var food = InlineKeyboardButton.builder()
-                .text("Еда").callbackData("food").build();
-
-        menu = InlineKeyboardMarkup.builder()
-                .keyboardRow(List.of(drinks, food))
-                .keyboardRow(List.of(back))
-                .build();
-    }
-
-
-    public void copyMessage(Long who, Integer msgId){
-        CopyMessage cm = CopyMessage.builder()
-                .fromChatId(who.toString())
-                .chatId(who.toString())
-                .messageId(msgId)
-                .build();
-        try {
-            execute(cm);
-        } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public void sendText(Long who, String what){
         SendMessage sm = SendMessage.builder()
                 .chatId(who.toString())
@@ -131,10 +41,15 @@ public class Bot extends TelegramLongPollingBot {
         }
     }
 
-    public void sendPhoto(Long who, InputFile what){
-        SendPhoto sm = SendPhoto.builder()
-                .chatId(who.toString()).photo(what)
-                .build();
+
+    public void send(SendPhoto sm){ // метод обертка для отправки чтобы убрать try/catch
+        try {
+            execute(sm);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void send(SendMessage sm){ // метод обертка для отправки чтобы убрать try/catch
         try {
             execute(sm);
         } catch (TelegramApiException e) {
