@@ -13,6 +13,14 @@ public class Recipe {
     private String url_photo;
     private ArrayList<String> ingredients;
 
+    public Recipe(Integer id, String title, String description, String url_photo, ArrayList<String> ingredients) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.url_photo = url_photo;
+        this.ingredients = ingredients;
+    }
+
     public Recipe(String title, String description, String url_photo, ArrayList<String> ingredients) {
         this.id = title.hashCode();
         this.title = title;
