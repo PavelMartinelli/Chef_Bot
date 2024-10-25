@@ -1,4 +1,5 @@
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
@@ -7,11 +8,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MenuMessage {
+    String mainMenuText = "✋ Добро пожаловать в главное меню бота Mix & Cook! Для просмотра рецептов воспользуйтесь кнопками ниже:";
 
-    public SendMessage createMainMenuMessage(long chatId) {
-        String mainMenuText = "✋ Добро пожаловать в главное меню бота Mix & Cook! Для просмотра рецептов воспользуйтесь кнопками ниже:";
+    public SendMessage createMessage(long chatId) {
         return SendMessage.builder()
                 .chatId(chatId)
+                .text(mainMenuText)
+                .replyMarkup(createKeyboard())
+                .build();
+    }
+
+    public EditMessageText createEditMessage(long chatId, int messageId) {
+        return EditMessageText.builder()
+                .chatId(String.valueOf(chatId))
+                .messageId(messageId)
                 .text(mainMenuText)
                 .replyMarkup(createKeyboard())
                 .build();
@@ -38,5 +48,4 @@ public class MenuMessage {
         row.add(button);
         return row;
     }
-
 }
