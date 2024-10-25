@@ -1,3 +1,4 @@
+import Message.*;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
@@ -5,17 +6,18 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
-import static java.lang.Math.toIntExact;
-
 public class Bot implements LongPollingSingleThreadUpdateConsumer {
+
     private final TelegramClient telegramClient;
-    private final MenuMessage MenuContent;
-    private final HelpMessage helpContent;
+    private final MenuMessage menuContent = new MenuMessage();
+    private final RandomMessage randomContent= new RandomMessage();
+    private final CatalogMessage catalogContent= new CatalogMessage();
+    private final WishlistMessage wishlistContent= new WishlistMessage();
+    private final HelpMessage helpContent = new HelpMessage();
+
 
     public Bot(String botToken) {
         telegramClient = new OkHttpTelegramClient(botToken);
-        MenuContent = new MenuMessage();
-        helpContent = new HelpMessage();
     }
 
     @Override
@@ -28,6 +30,7 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
         }
     }
 
+
     private void handleTextMessage(Update update) {
 
         long chat_id = update.getMessage().getChatId();
@@ -36,14 +39,35 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
         switch (messageText) {
             case "/start":
                 try {
-                    telegramClient.execute(MenuContent.createMainMenuMessage(chat_id));
+                    telegramClient.execute(menuContent.createMessage(chat_id));
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "/random":
+                try {
+                    telegramClient.execute(randomContent.createMessage(chat_id));
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "/catalog":
+                try {
+                    telegramClient.execute(catalogContent.createMessage(chat_id));
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "/wishlist":
+                try {
+                    telegramClient.execute(wishlistContent.createMessage(chat_id));
                 } catch (TelegramApiException e) {
                     e.printStackTrace();
                 }
                 break;
             case "/help":
                 try {
-                    telegramClient.execute(helpContent.createHelpMessage(chat_id));
+                    telegramClient.execute(helpContent.createMessage(chat_id));
                 } catch (TelegramApiException e) {
                     e.printStackTrace();
                 }
@@ -52,91 +76,67 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
     }
 
     private void handleCallbackQuery(Update update) {
-        String call_data = update.getCallbackQuery().getData();
-        long message_id = update.getCallbackQuery().getMessage().getMessageId();
-        long chat_id = update.getCallbackQuery().getMessage().getChatId();
+        String callData = update.getCallbackQuery().getData();
+        long chatId = update.getCallbackQuery().getMessage().getChatId();
+        int messageId = update.getCallbackQuery().getMessage().getMessageId();
 
-        String answer;
-
-        if (call_data.equals("/search")) {
-            answer = "Поиск блюд, напитков. Вы нажали на первую кнопку.";
-            EditMessageText new_message = EditMessageText.builder()
-                    .chatId(chat_id)
-                    .messageId(toIntExact(message_id))
-                    .text(answer)
-                    .build();
-
-            try {
-                telegramClient.execute(new_message);
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
-        } else if (call_data.equals("/random")) {
-            answer = "Случайный рецепт. Вы нажали на вторую кнопку.";
-            EditMessageText new_message = EditMessageText.builder()
-                    .chatId(chat_id)
-                    .messageId(toIntExact(message_id))
-                    .text(answer)
-                    .build();
-
-            try {
-                telegramClient.execute(new_message);
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
-        } else if (call_data.equals("/wishlist")) {
-            answer = "Избранное";
-            EditMessageText new_message = EditMessageText.builder()
-                    .chatId(chat_id)
-                    .messageId(toIntExact(message_id))
-                    .text(answer)
-                    .build();
-
-            try {
-                telegramClient.execute(new_message);
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
-        } else if (call_data.equals("/catalog")) {
-            answer = "Каталог";
-            EditMessageText new_message = EditMessageText.builder()
-                    .chatId(chat_id)
-                    .messageId(toIntExact(message_id))
-                    .text(answer)
-                    .build();
-
-            try {
-                telegramClient.execute(new_message);
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
-        } else if (call_data.equals("/help")) {
-            try {
-                telegramClient.execute(helpContent.createHelpMessage(chat_id));
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
-        } else if (call_data.equals("/back")) {
-            try {
-                telegramClient.execute(MenuContent.createMainMenuMessage(chat_id));
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
-        } else {
-            answer = "Неверный запрос";
-            EditMessageText new_message = EditMessageText.builder()
-                    .chatId(chat_id)
-                    .messageId(toIntExact(message_id))
-                    .text(answer)
-                    .build();
-
-            try {
-                telegramClient.execute(new_message);
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
+        switch (callData) {
+            case "/search":
+                sendResponse(chatId, messageId, "Поиск блюд, напитков. Вы нажали на первую кнопку.");
+                break;
+            case "/random":
+                try {
+                    telegramClient.execute(randomContent.createEditMessage(chatId, messageId));
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "/catalog":
+                try {
+                    telegramClient.execute(catalogContent.createEditMessage(chatId, messageId));
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "/wishlist":
+                try {
+                    telegramClient.execute(wishlistContent.createEditMessage(chatId, messageId));
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "/help":
+                try {
+                    telegramClient.execute(helpContent.createEditMessage(chatId, messageId));
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "/back":
+                try {
+                    telegramClient.execute(menuContent.createEditMessage(chatId, messageId));
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+                break;
+            default:
+                sendResponse(chatId, messageId, "Неверный запрос");
         }
+    }
 
+
+    private void sendResponse(long chatId, int messageId, String messageText) {
+        EditMessageText newMessage = EditMessageText.builder()
+                .chatId(String.valueOf(chatId))
+                .text(messageText)
+                .messageId(messageId >= 0 ? messageId : 0)
+                .build();
+
+        try {
+            telegramClient.execute(newMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
     }
 
 }
