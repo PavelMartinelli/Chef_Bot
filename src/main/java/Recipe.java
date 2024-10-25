@@ -4,7 +4,6 @@ import java.util.UUID;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 
-import javax.validation.constraints.NotNull;
 
 public class Recipe {
     private final Integer id;
@@ -29,7 +28,7 @@ public class Recipe {
         this.ingredients = ingredients;
     }
 
-    public SendPhoto createRecipeMessage(@NotNull Long id) {
+    /*public SendPhoto createRecipeMessage( Long id) {
         String caption = "<b>" + title + "</b> <br> <br>" +
                 "<p>" + description + "<p> <br> <br>" +
                 String.join("<br>", ingredients) + "</p>";
@@ -41,7 +40,7 @@ public class Recipe {
         RecipeMessage.setPhoto(new InputFile(url_photo));
         RecipeMessage.setCaption(caption);
         return RecipeMessage;
-    }
+    }*/
 
 
     public Integer getId() {

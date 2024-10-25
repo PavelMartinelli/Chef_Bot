@@ -1,69 +1,124 @@
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.TelegramBotsApi;
-import org.telegram.telegrambots.meta.api.methods.CopyMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.api.objects.InputFile;
+import Message.*;
+import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
+import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 
-import java.util.ArrayList;
-import java.util.List;
+public class Bot implements LongPollingSingleThreadUpdateConsumer {
 
-public class Bot extends TelegramLongPollingBot {
-    private InlineKeyboardMarkup menu;
-    Tg_Token token = new Tg_Token();
+    private final TelegramClient telegramClient;
+    private final MenuMessage menuContent = new MenuMessage();
+    private final RandomMessage randomContent= new RandomMessage();
+    private final CatalogMessage catalogContent= new CatalogMessage();
+    private final WishlistMessage wishlistContent= new WishlistMessage();
+    private final HelpMessage helpContent = new HelpMessage();
 
-    public static void main(String[] args) throws TelegramApiException {
-        TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
-        Bot bot = new Bot();
-        botsApi.registerBot(bot);
+
+    public Bot(String botToken) {
+        telegramClient = new OkHttpTelegramClient(botToken);
     }
 
     @Override
-    public void onUpdateReceived(Update update) {
-
-    }
-
-    ///////////////////////////////////////////////////////////////////
-    public void sendText(Long who, String what){
-        SendMessage sm = SendMessage.builder()
-                .chatId(who.toString())
-                .text(what).build();
-        try {
-            execute(sm);
-        } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
+    public void consume(Update update) {
+        System.out.println(update);
+        if (update.hasMessage() && update.getMessage().hasText()) {
+            handleTextMessage(update);
+        } else if (update.hasCallbackQuery()) {
+            handleCallbackQuery(update);
         }
     }
 
 
-    public void send(SendPhoto sm){ // метод обертка для отправки чтобы убрать try/catch
-        try {
-            execute(sm);
-        } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    public void send(SendMessage sm){ // метод обертка для отправки чтобы убрать try/catch
-        try {
-            execute(sm);
-        } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
+    private void handleTextMessage(Update update) {
+
+        long chat_id = update.getMessage().getChatId();
+        String messageText = update.getMessage().getText();
+
+        switch (messageText) {
+            case "/start":
+                try {
+                    telegramClient.execute(menuContent.createMessage(chat_id));
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "/random":
+                try {
+                    telegramClient.execute(randomContent.createMessage(chat_id));
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "/catalog":
+                try {
+                    telegramClient.execute(catalogContent.createMessage(chat_id));
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "/wishlist":
+                try {
+                    telegramClient.execute(wishlistContent.createMessage(chat_id));
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "/help":
+                try {
+                    telegramClient.execute(helpContent.createMessage(chat_id));
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+                break;
         }
     }
 
-    @Override
-    public String getBotUsername() {
-        return "@Chef_A_P_bot";
+    private void handleCallbackQuery(Update update) {
+        String callData = update.getCallbackQuery().getData();
+        long chatId = update.getCallbackQuery().getMessage().getChatId();
+        int messageId = update.getCallbackQuery().getMessage().getMessageId();
+
+        switch (callData) {
+            case "/search":
+                sendResponse(chatId, messageId, "Поиск блюд, напитков. Вы нажали на первую кнопку.");
+                break;
+            case "/random":
+                myExecute(randomContent.createEditMessage(chatId, messageId));
+                break;
+            case "/catalog":
+                myExecute(catalogContent.createEditMessage(chatId, messageId));
+                break;
+            case "/wishlist":
+                myExecute(wishlistContent.createEditMessage(chatId, messageId));
+                break;
+            case "/help":
+                myExecute(helpContent.createEditMessage(chatId, messageId));
+                break;
+            case "/back":
+                myExecute(menuContent.createEditMessage(chatId, messageId));
+                break;
+            default:
+                sendResponse(chatId, messageId, "Неверный запрос");
+        }
+    }
+    private void myExecute(EditMessageText message) {
+        try {
+            telegramClient.execute(message);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
     }
 
-    @Override
-    public String getBotToken() {
-        return token.getToken();
+    private void sendResponse(long chatId, int messageId, String messageText) {
+        EditMessageText newMessage = EditMessageText.builder()
+                .chatId(String.valueOf(chatId))
+                .text(messageText)
+                .messageId(messageId >= 0 ? messageId : 0)
+                .build();
+
+        myExecute(newMessage);
     }
+
 }
