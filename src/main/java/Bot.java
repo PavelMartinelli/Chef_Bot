@@ -85,45 +85,31 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
                 sendResponse(chatId, messageId, "Поиск блюд, напитков. Вы нажали на первую кнопку.");
                 break;
             case "/random":
-                try {
-                    telegramClient.execute(randomContent.createEditMessage(chatId, messageId));
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                }
+                myExecute(randomContent.createEditMessage(chatId, messageId));
                 break;
             case "/catalog":
-                try {
-                    telegramClient.execute(catalogContent.createEditMessage(chatId, messageId));
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                }
+                myExecute(catalogContent.createEditMessage(chatId, messageId));
                 break;
             case "/wishlist":
-                try {
-                    telegramClient.execute(wishlistContent.createEditMessage(chatId, messageId));
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                }
+                myExecute(wishlistContent.createEditMessage(chatId, messageId));
                 break;
             case "/help":
-                try {
-                    telegramClient.execute(helpContent.createEditMessage(chatId, messageId));
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                }
+                myExecute(helpContent.createEditMessage(chatId, messageId));
                 break;
             case "/back":
-                try {
-                    telegramClient.execute(menuContent.createEditMessage(chatId, messageId));
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                }
+                myExecute(menuContent.createEditMessage(chatId, messageId));
                 break;
             default:
                 sendResponse(chatId, messageId, "Неверный запрос");
         }
     }
-
+    private void myExecute(EditMessageText message) {
+        try {
+            telegramClient.execute(message);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void sendResponse(long chatId, int messageId, String messageText) {
         EditMessageText newMessage = EditMessageText.builder()
@@ -132,11 +118,7 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
                 .messageId(messageId >= 0 ? messageId : 0)
                 .build();
 
-        try {
-            telegramClient.execute(newMessage);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
+        myExecute(newMessage);
     }
 
 }
