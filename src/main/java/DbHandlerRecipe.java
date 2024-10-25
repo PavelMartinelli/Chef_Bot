@@ -3,39 +3,42 @@ import org.sqlite.JDBC;
 import java.sql.*;
 import java.util.*;
 
-public class  DbHandlerRecipe {
+public class  DbHandlerRecipe  {
 
-    private static String CONNECTION_PATH;
+    private static final String CONNECTION_PATH = "jdbc:sqlite:E:\\ООП\\Chef_Bot\\src\\main\\DB\\Recipes.db";
     private static Connection connection;
 
     /////Синглтон
-    private DbHandlerRecipe() {
-    }
-
-    private static class SingletonHolder {
-        public static final DbHandlerRecipe HOLDER_INSTANCE = new DbHandlerRecipe();
+    private static class SingletonHolder{
+        public static final DbHandlerRecipe HOLDER_INSTANCE;
+        static {
+            try {
+                HOLDER_INSTANCE = new DbHandlerRecipe();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
     public static DbHandlerRecipe getInstance() {
         return SingletonHolder.HOLDER_INSTANCE;
     }
     ////Синглтон
 
-    private DbHandlerRecipe(String connection_path) throws SQLException {
+    private DbHandlerRecipe() throws SQLException {
         DriverManager.registerDriver(new JDBC());
-        CONNECTION_PATH = connection_path;
         connection = DriverManager.getConnection(CONNECTION_PATH);
     }
 
-    public Map<Integer, Recipe> getALLRecipes() throws SQLException {
+    public Map<Integer, Recipe> getALLRecipes() {
         try (Statement statement = connection.createStatement()) {
-            Map<Integer, Recipe> recipesDictonary = new HashMap<Integer, Recipe>();
+            Map<Integer, Recipe> recipesDictonary = new HashMap<>();
 
             ResultSet resultSet = statement.executeQuery("SELECT id, title, description, " +
                     "url_photo, ingredients FROM products");
 
             while (resultSet.next()) {
                 ArrayList<String> ingredients_from_bd =
-                    new ArrayList<String>(Arrays.asList(resultSet.getString("title").split(",")));
+                        new ArrayList<>(Arrays.asList(resultSet.getString("title").split(",")));
 
                 recipesDictonary.put(resultSet.getInt("id"),
                         new Recipe(resultSet.getInt("id"),
@@ -54,7 +57,7 @@ public class  DbHandlerRecipe {
         }
     }
 
-    public void addRecipe(Recipe recipe) throws SQLException {
+    public void addRecipe(Recipe recipe)  {
         String ingredients_to_bd = String.join(",", recipe.getIngredients());
 
         try (PreparedStatement statement = connection.prepareStatement(
