@@ -34,7 +34,7 @@ public class  DbHandlerRecipe  {
             Map<Integer, Recipe> recipesDictonary = new HashMap<>();
 
             ResultSet resultSet = statement.executeQuery("SELECT id, title, description, " +
-                    "url_photo, ingredients FROM products");
+                    "url_photo, ingredients FROM Recipes");
 
             while (resultSet.next()) {
                 ArrayList<String> ingredients_from_bd =
@@ -61,7 +61,7 @@ public class  DbHandlerRecipe  {
         String ingredients_to_bd = String.join(",", recipe.getIngredients());
 
         try (PreparedStatement statement = connection.prepareStatement(
-                "INSERT INTO Products(`id`, `title`, `description`, `url_photo`,`ingredients` ) " +
+                "INSERT INTO Recipes(`id`, `title`, `description`, `url_photo`,`ingredients` ) " +
                         "VALUES(?, ?, ?, ?, ?)")) {
             statement.setObject(1, recipe.getId());
             statement.setObject(2, recipe.getTitle());
@@ -77,7 +77,7 @@ public class  DbHandlerRecipe  {
 
     public void deleteRecipe(int id) {
         try (PreparedStatement statement = connection.prepareStatement(
-                "DELETE FROM Products WHERE id = ?")) {
+                "DELETE FROM Recipes WHERE id = ?")) {
             statement.setObject(1, id);
 
             statement.execute();
