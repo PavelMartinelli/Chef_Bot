@@ -17,6 +17,10 @@ public class Recipes {
         this.recipesDictonary = dbHandlerRecipe.getALL();
     }
 
+    public int getSize(){
+        return recipesDictonary.size();
+    }
+
     public Recipe getRecipe(Integer id) {
         return recipesDictonary.get(id);
     }

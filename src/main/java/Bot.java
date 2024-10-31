@@ -97,7 +97,9 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
                 break;
             case "/catalog":
                 execute(catalogContent.createEditMessage(chatId, messageId));
-                execute(recipes.getRecipe(1).createRecipeMessage(chatId));
+                for (int curId = 1; curId <= recipes.getSize(); curId++) {
+                    execute(recipes.getRecipe(curId).createRecipeMessage(chatId));
+                }
                 break;
             case "/wishlist":
                 execute(wishlistContent.createEditMessage(chatId, messageId));
