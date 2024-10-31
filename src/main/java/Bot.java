@@ -39,7 +39,6 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
 
 
     private void handleTextMessage(Update update) {
-        //System.out.println(recipes.getRecipe(1).getUrl_photo());
 
         long chat_id = update.getMessage().getChatId();
         String messageText = update.getMessage().getText();

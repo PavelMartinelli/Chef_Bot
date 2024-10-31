@@ -1,4 +1,4 @@
-/*package DataBaseHandlers;
+package DataBaseHandlers;
 
 import User.*;
 import org.sqlite.JDBC;
@@ -38,7 +38,12 @@ public class DbHandlerUser {
             ResultSet resultSet = statement.executeQuery("SELECT id, userName, password FROM Users");
 
             while (resultSet.next()) {
+                Long id = resultSet.getLong(1);
+                String userName = resultSet.getString(2);
+                String password = resultSet.getString(3);
 
+                User user = new User(id, userName, password);
+                recipesDictonary.put(id, user);
             }
 
             return recipesDictonary;
@@ -50,16 +55,14 @@ public class DbHandlerUser {
         }
     }
 
-    public void addRecipe(Recipe recipe)  {
+    public void add(User user)  {
 
         try (PreparedStatement statement = connection.prepareStatement(
-                "INSERT INTO Recipes(`id`, `title`, `description`, `url_photo`,`ingredients` ) " +
-                        "VALUES(?, ?, ?, ?, ?)")) {
-            statement.setObject(1, recipe.getId());
-            statement.setObject(2, recipe.getTitle());
-            statement.setObject(3, recipe.getDescription());
-            statement.setObject(4, recipe.getUrl_photo());
-            statement.setObject(5, ingredients_to_bd);
+                "INSERT INTO Users(`id`, `userName`, `password`) " +
+                        "VALUES(?, ?, ?)")) {
+            statement.setObject(1, user.getId());
+            statement.setObject(2, user.getUserName());
+            statement.setObject(3, user.getPassword());
 
             statement.execute();
         } catch (SQLException e) {
@@ -67,7 +70,7 @@ public class DbHandlerUser {
         }
     }
 
-    public void deleteRecipe(int id) {
+    public void delete(Long id) {
         try (PreparedStatement statement = connection.prepareStatement(
                 "DELETE FROM Users WHERE id = ?")) {
             statement.setObject(1, id);
@@ -77,4 +80,4 @@ public class DbHandlerUser {
             e.printStackTrace();
         }
     }
-}*/
+}
