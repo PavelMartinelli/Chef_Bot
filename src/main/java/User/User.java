@@ -1,4 +1,5 @@
-import java.util.ArrayList;
+package User;
+
 import java.util.Arrays;
 
 public class User {
@@ -21,19 +22,12 @@ public class User {
         AWAITING_PASSWORD,
         AWAITING_RECIPE_NAME,
         AWAITING_RECIPE_INGREDIENTS,
-        COMPLETED;
-        private static boolean isEnumContains(String str) {
-            // Проверка есть ли элемент в перечеслении за одну строку кода
-            return Arrays.stream(States.values()).anyMatch(e -> e.name().equals(str));
-        }
+        COMPLETED,
+        UNDEFINED;
     }
 
     public void setState(String state) {
-        if(States.isEnumContains(state)) {
-            this.state = state;
-        }
-        else
-            this.state = "UNDEFINED";
+        this.state = state;
     }
 
     public String getState() {

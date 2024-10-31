@@ -1,51 +1,44 @@
+/*package DataBaseHandlers;
+
+import User.*;
 import org.sqlite.JDBC;
 
 import java.sql.*;
 import java.util.*;
 
-public class  DbHandlerRecipe  {
-
+public class DbHandlerUser {
     private static final String CONNECTION_PATH = "jdbc:sqlite:E:\\ООП\\Chef_Bot\\src\\main\\DB\\Recipes.db";
     private static Connection connection;
 
     /////Синглтон
     private static class SingletonHolder{
-        public static final DbHandlerRecipe HOLDER_INSTANCE;
+        public static final DbHandlerUser HOLDER_INSTANCE;
         static {
             try {
-                HOLDER_INSTANCE = new DbHandlerRecipe();
+                HOLDER_INSTANCE = new DbHandlerUser();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
         }
     }
-    public static DbHandlerRecipe getInstance() {
-        return SingletonHolder.HOLDER_INSTANCE;
+    public static DbHandlerUser getInstance() {
+        return DbHandlerUser.SingletonHolder.HOLDER_INSTANCE;
     }
     ////Синглтон
 
-    private DbHandlerRecipe() throws SQLException {
+    private DbHandlerUser() throws SQLException {
         DriverManager.registerDriver(new JDBC());
         connection = DriverManager.getConnection(CONNECTION_PATH);
     }
 
-    public Map<Integer, Recipe> getALLRecipes() {
+    public Map<Long, User> getALL() {
         try (Statement statement = connection.createStatement()) {
-            Map<Integer, Recipe> recipesDictonary = new HashMap<>();
+            Map<Long, User> recipesDictonary = new HashMap<>();
 
-            ResultSet resultSet = statement.executeQuery("SELECT id, title, description, " +
-                    "url_photo, ingredients FROM Recipes");
+            ResultSet resultSet = statement.executeQuery("SELECT id, userName, password FROM Users");
 
             while (resultSet.next()) {
-                ArrayList<String> ingredients_from_bd =
-                        new ArrayList<>(Arrays.asList(resultSet.getString("title").split(",")));
 
-                recipesDictonary.put(resultSet.getInt("id"),
-                        new Recipe(resultSet.getInt("id"),
-                                resultSet.getString("title"),
-                                resultSet.getString("description"),
-                                resultSet.getString("url_photo"),
-                                ingredients_from_bd));
             }
 
             return recipesDictonary;
@@ -58,7 +51,6 @@ public class  DbHandlerRecipe  {
     }
 
     public void addRecipe(Recipe recipe)  {
-        String ingredients_to_bd = String.join(",", recipe.getIngredients());
 
         try (PreparedStatement statement = connection.prepareStatement(
                 "INSERT INTO Recipes(`id`, `title`, `description`, `url_photo`,`ingredients` ) " +
@@ -77,7 +69,7 @@ public class  DbHandlerRecipe  {
 
     public void deleteRecipe(int id) {
         try (PreparedStatement statement = connection.prepareStatement(
-                "DELETE FROM Recipes WHERE id = ?")) {
+                "DELETE FROM Users WHERE id = ?")) {
             statement.setObject(1, id);
 
             statement.execute();
@@ -85,5 +77,4 @@ public class  DbHandlerRecipe  {
             e.printStackTrace();
         }
     }
-
-}
+}*/
