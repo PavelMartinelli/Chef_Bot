@@ -3,11 +3,10 @@ package Recipe;
 import DataBaseHandlers.DbHandlerRecipe;
 import java.util.Random;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class Recipes {
-    private Map<Integer, Recipe> recipesDictonary = new HashMap<>();
+    private final Map<Integer, Recipe> recipesDictonary;
     private final DbHandlerRecipe dbHandlerRecipe = DbHandlerRecipe.getInstance();
 
     public Recipes(Map<Integer, Recipe> recipesDictonary) { //Конструктор без БД
@@ -33,6 +32,12 @@ public class Recipes {
     public void addRecipe(Recipe recipe)  {
         recipesDictonary.put(recipe.getId(), recipe);
         dbHandlerRecipe.add(recipe);
+    }
+
+    public void deleteRecipe(Integer id)  {
+        recipesDictonary.remove(id);
+
+        dbHandlerRecipe.delete(id);
     }
 
 }

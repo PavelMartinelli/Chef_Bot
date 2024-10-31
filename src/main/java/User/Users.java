@@ -1,11 +1,10 @@
 package User;
 
 import DataBaseHandlers.DbHandlerUser;
-import java.util.HashMap;
 import java.util.Map;
 
 public class Users {
-    private Map<Long, User> usersDictonary = new HashMap<Long, User>();
+    private final Map<Long, User> usersDictonary;
     private final DbHandlerUser dbHandlerUser = DbHandlerUser.getInstance();
 
     Users(Map<Long, User> usersDictonary) { // Конструктор без БД

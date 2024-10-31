@@ -1,6 +1,5 @@
 package User;
 
-import java.util.Arrays;
 
 public class User {
     private final Long id;
@@ -23,7 +22,7 @@ public class User {
         AWAITING_RECIPE_NAME,
         AWAITING_RECIPE_INGREDIENTS,
         COMPLETED,
-        UNDEFINED;
+        UNDEFINED
     }
 
     public void setState(String state) {
