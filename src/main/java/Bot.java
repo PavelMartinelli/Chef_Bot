@@ -21,7 +21,7 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
     private final HelpMessage helpContent = new HelpMessage();
 
     private final Recipes recipes = new Recipes();
-    //private final Users users = new Users()
+    private final Users users = new Users();
 
 
     public Bot(String botToken) {

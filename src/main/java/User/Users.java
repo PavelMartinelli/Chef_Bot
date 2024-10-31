@@ -7,10 +7,10 @@ public class Users {
     private final Map<Long, User> usersDictonary;
     private final DbHandlerUser dbHandlerUser = DbHandlerUser.getInstance();
 
-    Users(Map<Long, User> usersDictonary) { // Конструктор без БД
+    public Users(Map<Long, User> usersDictonary) { // Конструктор без БД
         this.usersDictonary = usersDictonary;
     }
-    Users(){ // Конструктор через БД
+    public Users(){ // Конструктор через БД
         this.usersDictonary = dbHandlerUser.getALL();
     }
 
