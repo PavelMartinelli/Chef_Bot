@@ -10,10 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BaseMessage {
-    // Метод для получения текста сообщения (определяется в наследниках)
     protected abstract String getMessageText();
-
-    // Метод для создания кнопок (определяется в наследниках)
     protected abstract List<InlineKeyboardRow> createKeyboardRows();
 
     public SendMessage createMessage(long chatId) {
