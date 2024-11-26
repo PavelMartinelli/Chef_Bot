@@ -1,3 +1,6 @@
+package DataBaseHandlers;
+
+import Recipe.Recipe;
 import org.sqlite.JDBC;
 
 import java.sql.*;
@@ -29,7 +32,7 @@ public class  DbHandlerRecipe  {
         connection = DriverManager.getConnection(CONNECTION_PATH);
     }
 
-    public Map<Integer, Recipe> getALLRecipes() {
+    public Map<Integer, Recipe> getALL() {
         try (Statement statement = connection.createStatement()) {
             Map<Integer, Recipe> recipesDictonary = new HashMap<>();
 
@@ -38,7 +41,7 @@ public class  DbHandlerRecipe  {
 
             while (resultSet.next()) {
                 ArrayList<String> ingredients_from_bd =
-                        new ArrayList<>(Arrays.asList(resultSet.getString("title").split(",")));
+                        new ArrayList<>(Arrays.asList(resultSet.getString("ingredients").split(",")));
 
                 recipesDictonary.put(resultSet.getInt("id"),
                         new Recipe(resultSet.getInt("id"),
@@ -57,7 +60,7 @@ public class  DbHandlerRecipe  {
         }
     }
 
-    public void addRecipe(Recipe recipe)  {
+    public void add(Recipe recipe)  {
         String ingredients_to_bd = String.join(",", recipe.getIngredients());
 
         try (PreparedStatement statement = connection.prepareStatement(
@@ -75,7 +78,7 @@ public class  DbHandlerRecipe  {
         }
     }
 
-    public void deleteRecipe(int id) {
+    public void delete(int id) {
         try (PreparedStatement statement = connection.prepareStatement(
                 "DELETE FROM Recipes WHERE id = ?")) {
             statement.setObject(1, id);

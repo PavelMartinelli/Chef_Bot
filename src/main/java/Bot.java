@@ -1,6 +1,11 @@
 import Message.*;
+
+import Recipe.*;
+import User.*;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -14,6 +19,9 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
     private final CatalogMessage catalogContent= new CatalogMessage();
     private final WishlistMessage wishlistContent= new WishlistMessage();
     private final HelpMessage helpContent = new HelpMessage();
+
+    private final Recipes recipes = new Recipes();
+    private final Users users = new Users();
 
 
     public Bot(String botToken) {
@@ -33,45 +41,34 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
 
     private void handleTextMessage(Update update) {
 
-        long chat_id = update.getMessage().getChatId();
+        long chatId = update.getMessage().getChatId();
         String messageText = update.getMessage().getText();
 
         switch (messageText) {
             case "/start":
                 try {
-                    telegramClient.execute(menuContent.createMessage(chat_id));
+                    telegramClient.execute(menuContent.createMessage(chatId));
                 } catch (TelegramApiException e) {
                     e.printStackTrace();
                 }
                 break;
             case "/random":
-                try {
-                    telegramClient.execute(randomContent.createMessage(chat_id));
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                }
+                execute(randomContent.createMessage(chatId));
+                execute(recipes.getRandomRecipe().createRecipeMessage(chatId));
                 break;
             case "/catalog":
-                try {
-                    telegramClient.execute(catalogContent.createMessage(chat_id));
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
+                execute(catalogContent.createMessage(chatId));
+                for (int curId = 1; curId <= recipes.getSize(); curId++) {
+                    execute(recipes.getRecipe(curId).createRecipeMessage(chatId));
                 }
                 break;
             case "/wishlist":
-                try {
-                    telegramClient.execute(wishlistContent.createMessage(chat_id));
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                }
+                execute(wishlistContent.createMessage(chatId));
                 break;
             case "/help":
-                try {
-                    telegramClient.execute(helpContent.createMessage(chat_id));
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                }
+                execute(helpContent.createMessage(chatId));
                 break;
+
         }
     }
 
@@ -85,25 +82,43 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
                 sendResponse(chatId, messageId, "Поиск блюд, напитков. Вы нажали на первую кнопку.");
                 break;
             case "/random":
-                myExecute(randomContent.createEditMessage(chatId, messageId));
+                execute(randomContent.createEditMessage(chatId, messageId));
+                execute(recipes.getRandomRecipe().createRecipeMessage(chatId));
                 break;
             case "/catalog":
-                myExecute(catalogContent.createEditMessage(chatId, messageId));
+                execute(catalogContent.createEditMessage(chatId, messageId));
+                for (int curId = 1; curId <= recipes.getSize(); curId++) {
+                    execute(recipes.getRecipe(curId).createRecipeMessage(chatId));
+                }
                 break;
             case "/wishlist":
-                myExecute(wishlistContent.createEditMessage(chatId, messageId));
+                execute(wishlistContent.createEditMessage(chatId, messageId));
                 break;
             case "/help":
-                myExecute(helpContent.createEditMessage(chatId, messageId));
+                execute(helpContent.createEditMessage(chatId, messageId));
                 break;
             case "/back":
-                myExecute(menuContent.createEditMessage(chatId, messageId));
+                execute(menuContent.createEditMessage(chatId, messageId));
                 break;
             default:
                 sendResponse(chatId, messageId, "Неверный запрос");
         }
     }
-    private void myExecute(EditMessageText message) {
+    private void execute(EditMessageText message) {
+        try {
+            telegramClient.execute(message);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+    private void execute(SendPhoto message) {
+        try {
+            telegramClient.execute(message);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+    private void execute(SendMessage message) {
         try {
             telegramClient.execute(message);
         } catch (TelegramApiException e) {
@@ -118,7 +133,7 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
                 .messageId(messageId >= 0 ? messageId : 0)
                 .build();
 
-        myExecute(newMessage);
+        execute(newMessage);
     }
 
 }

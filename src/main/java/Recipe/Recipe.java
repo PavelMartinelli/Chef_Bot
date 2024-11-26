@@ -1,8 +1,9 @@
-import java.util.ArrayList;
-import java.util.UUID;
+package Recipe;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
+
+import java.util.ArrayList;
 
 
 public class Recipe {
@@ -28,19 +29,14 @@ public class Recipe {
         this.ingredients = ingredients;
     }
 
-    /*public SendPhoto createRecipeMessage( Long id) {
-        String caption = "<b>" + title + "</b> <br> <br>" +
-                "<p>" + description + "<p> <br> <br>" +
-                String.join("<br>", ingredients) + "</p>";
+    public SendPhoto createRecipeMessage(Long id) {
+        String caption = "<b>" + title + "</b> \n\n"
+                + description + " \n" + "\n "
+                + String.join("\n", ingredients);
 
-        SendPhoto RecipeMessage = new SendPhoto();
-
-        RecipeMessage.setParseMode("HTML");
-        RecipeMessage.setChatId(id.toString());
-        RecipeMessage.setPhoto(new InputFile(url_photo));
-        RecipeMessage.setCaption(caption);
-        return RecipeMessage;
-    }*/
+        return SendPhoto.builder().parseMode("HTML")
+                .chatId(id).photo(new InputFile(url_photo)).caption(caption).build();
+    }
 
 
     public Integer getId() {
