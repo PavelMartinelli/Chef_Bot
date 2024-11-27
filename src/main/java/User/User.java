@@ -5,13 +5,13 @@ public class User {
     private final Long id;
     private String userName;
     private String password;
-    private String state;
+    private States state;
 
     public User(Long id, String userName, String password) {
         this.id = id;
         this.userName = userName;
         this.password = password;
-        state = "START";
+        state = States.START;
     }
     public enum States {
         START,
@@ -28,12 +28,11 @@ public class User {
         COMPLETED,
         UNDEFINED
     }
-
-    public void setState(String state) {
+    public void setState(States state) {
         this.state = state;
     }
 
-    public String getState() {
+    public States getState() {
         return state;
     }
 
