@@ -85,6 +85,12 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
             return;
         }
 
+        if(callData.startsWith("/del_favourites")){
+            Integer favRecipeId = Integer.parseInt(callData.split("\\$")[1]);
+            users.getUser(userId).removeFavoritesRecipe(favRecipeId);
+            return;
+        }
+
         switch (callData) {
             case "/search":
                 sendResponse(chatId, messageId, "Поиск блюд, напитков. Вы нажали на первую кнопку.");

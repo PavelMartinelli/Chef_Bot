@@ -90,8 +90,9 @@ public class User {
         dbHandlerUser.updateUserFavorites(id, idFavoritesRecipe);
     }
 
-    public void removeFavoritesRecipe(Integer id){
-        idFavoritesRecipe.remove(id);
+    public void removeFavoritesRecipe(Integer recipeId){
+        idFavoritesRecipe.remove(recipeId);
+        dbHandlerUser.updateUserFavorites(id, idFavoritesRecipe);
     }
 
 }
