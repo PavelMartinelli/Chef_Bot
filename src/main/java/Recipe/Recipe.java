@@ -2,8 +2,12 @@ package Recipe;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class Recipe {
@@ -35,7 +39,11 @@ public class Recipe {
                 + String.join("\n", ingredients);
 
         return SendPhoto.builder().parseMode("HTML")
-                .chatId(id).photo(new InputFile(url_photo)).caption(caption).build();
+                .chatId(id)
+                .photo(new InputFile(url_photo))
+                .caption(caption)
+                .replyMarkup(createFavouritesButton())
+                .build();
     }
 
 
@@ -74,4 +82,20 @@ public class Recipe {
     public void setIngredients(ArrayList<String> ingredients) {
         this.ingredients = ingredients;
     }
+
+    //TO DO Создание Кнопки избраного
+    private InlineKeyboardMarkup createFavouritesButton() {
+        List<InlineKeyboardRow> rows = new ArrayList<>();
+
+        InlineKeyboardButton button = InlineKeyboardButton.builder()
+                .text("Добавить в избранное")
+                .callbackData("/add_favourites$" + id)
+                .build();
+        InlineKeyboardRow row = new InlineKeyboardRow();
+        row.add(button);
+        rows.add(row);
+
+        return InlineKeyboardMarkup.builder().keyboard(rows).build();
+    }
+
 }

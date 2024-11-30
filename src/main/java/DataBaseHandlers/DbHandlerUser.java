@@ -109,4 +109,6 @@ public class DbHandlerUser {
             e.printStackTrace();
         }
     }
+
+    //TO DO Функия оновления избраного у пользователя по его id
 }
