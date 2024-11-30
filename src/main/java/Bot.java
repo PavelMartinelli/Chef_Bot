@@ -77,6 +77,12 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
         long chatId = update.getCallbackQuery().getMessage().getChatId();
         int messageId = update.getCallbackQuery().getMessage().getMessageId();
 
+        if(callData.startsWith("/add_favourites")){
+            Integer favRecipeId = Integer.parseInt(callData.split("\\$")[1]);
+            //TO DO Добавление в список избраного по id пользователя
+            return;
+        }
+
         switch (callData) {
             case "/search":
                 sendResponse(chatId, messageId, "Поиск блюд, напитков. Вы нажали на первую кнопку.");
@@ -108,6 +114,7 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
         try {
             telegramClient.execute(message);
         } catch (TelegramApiException e) {
+            System.out.println(e.getMessage());
             e.printStackTrace();
         }
     }
