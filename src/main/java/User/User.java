@@ -1,18 +1,32 @@
 package User;
 
 
+import java.util.ArrayList;
+
 public class User {
     private final Long id;
     private String userName;
     private String password;
     private States state;
+    private ArrayList<Integer> idFavoritesRecipe;
 
     public User(Long id, String userName, String password) {
         this.id = id;
         this.userName = userName;
         this.password = password;
         state = States.START;
+        idFavoritesRecipe = null;
     }
+
+    public User(Long id, String userName, String password, ArrayList<Integer> idFavoritesRecipe) {
+        this.id = id;
+        this.userName = userName;
+        this.password = password;
+        state = States.START;
+        this.idFavoritesRecipe = idFavoritesRecipe;
+    }
+
+
     public enum States {
         START,
         UNREGISTERED,
@@ -57,5 +71,16 @@ public class User {
         this.password = password;
     }
 
+    public ArrayList<Integer> getIdFavoritesRecipe() {
+        return idFavoritesRecipe;
+    }
+
+    public void addFavoritesRecipe(Integer id){
+        idFavoritesRecipe.add(id);
+    }
+
+    public void removeFavoritesRecipe(Integer id){
+        idFavoritesRecipe.remove(id);
+    }
 
 }
