@@ -33,7 +33,7 @@ public class Recipe {
         this.ingredients = ingredients;
     }
 
-    public SendPhoto createRecipeMessage(Long id) {
+    public SendPhoto createRecipeMessage(Long id) { // Для добовления в избранное
         String caption = "<b>" + title + "</b> \n\n"
                 + description + " \n" + "\n "
                 + String.join("\n", ingredients);
@@ -42,7 +42,20 @@ public class Recipe {
                 .chatId(id)
                 .photo(new InputFile(url_photo))
                 .caption(caption)
-                .replyMarkup(createFavouritesButton())
+                .replyMarkup(createFavouritesButton(false))
+                .build();
+    }
+
+    public SendPhoto createRecipeMessage(Long id, boolean isRemoveButton) { // Для удаления из избранного
+        String caption = "<b>" + title + "</b> \n\n"
+                + description + " \n" + "\n "
+                + String.join("\n", ingredients);
+
+        return SendPhoto.builder().parseMode("HTML")
+                .chatId(id)
+                .photo(new InputFile(url_photo))
+                .caption(caption)
+                .replyMarkup(createFavouritesButton(isRemoveButton))
                 .build();
     }
 
@@ -84,12 +97,22 @@ public class Recipe {
     }
 
     //TO DO Создание Кнопки избраного
-    private InlineKeyboardMarkup createFavouritesButton() {
+    private InlineKeyboardMarkup createFavouritesButton(boolean isRemoveButton) {
         List<InlineKeyboardRow> rows = new ArrayList<>();
+        String text;
+        String callbackData;
+        if (isRemoveButton) {
+            text = "Удалить из избранного";
+            callbackData = "/del_favourites$" + id;
+        }
+        else {
+            text = "Добавить в избранное";
+            callbackData = "/add_favourites$" + id;
+        }
 
         InlineKeyboardButton button = InlineKeyboardButton.builder()
-                .text("Добавить в избранное")
-                .callbackData("/add_favourites$" + id)
+                .text(text)
+                .callbackData(callbackData)
                 .build();
         InlineKeyboardRow row = new InlineKeyboardRow();
         row.add(button);
