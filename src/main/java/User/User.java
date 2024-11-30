@@ -80,11 +80,12 @@ public class User {
     }
 
     public void addFavoritesRecipe(Integer recipeId){
-        if (idFavoritesRecipe.contains(recipeId)){
-            return;
-        }
         if (idFavoritesRecipe == null) {
             idFavoritesRecipe = new ArrayList<>();
+        }
+
+        if (idFavoritesRecipe.contains(recipeId)){
+            return;
         }
         idFavoritesRecipe.add(recipeId);
         dbHandlerUser.updateUserFavorites(id, idFavoritesRecipe);
