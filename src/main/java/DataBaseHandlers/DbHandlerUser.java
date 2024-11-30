@@ -70,12 +70,6 @@ public class DbHandlerUser {
             return Collections.emptyMap();
         }
     }
-    // TO DO:
-    //idRecipes_to_bd_int =
-    //for (Integer cur : user.getIdFavoritesRecipe()) {
-    //user.getIdFavoritesRecipe().add(cur.toString());
-    //}
-    //String idRecipes_to_bd_int = String.join(",", user.getIdFavoritesRecipe());
     public void add(User user)  {
 
 
@@ -110,5 +104,21 @@ public class DbHandlerUser {
         }
     }
 
-    //TO DO Функия оновления избраного у пользователя по его id
+    //TO DO Функия обновления избраного у пользователя по его id
+    public void updateUserFavorites(Long userId, ArrayList<Integer> newFavoritesRecipeList) {
+        try {
+            String updatedFavoritesRecipeIds = newFavoritesRecipeList.stream()
+                    .map(String::valueOf)
+                    .collect(Collectors.joining(","));
+
+            String updateQuery = "UPDATE Users SET idFavoritesRecipe = ? WHERE id = ?";
+            try (PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {
+                updateStatement.setString(1, updatedFavoritesRecipeIds);
+                updateStatement.setLong(2, userId);
+                updateStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -42,6 +42,7 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
     private void handleTextMessage(Update update) {
 
         long chatId = update.getMessage().getChatId();
+        long userId = update.getMessage().getFrom().getId();
         String messageText = update.getMessage().getText();
 
         switch (messageText) {
@@ -76,10 +77,11 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
         String callData = update.getCallbackQuery().getData();
         long chatId = update.getCallbackQuery().getMessage().getChatId();
         int messageId = update.getCallbackQuery().getMessage().getMessageId();
+        long userId = update.getCallbackQuery().getFrom().getId();
 
         if(callData.startsWith("/add_favourites")){
             Integer favRecipeId = Integer.parseInt(callData.split("\\$")[1]);
-            //TO DO Добавление в список избраного по id пользователя
+            users.getUser(userId).addFavoritesRecipe(favRecipeId);
             return;
         }
 

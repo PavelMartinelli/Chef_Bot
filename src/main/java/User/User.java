@@ -1,6 +1,8 @@
 package User;
 
 
+import DataBaseHandlers.DbHandlerUser;
+
 import java.util.ArrayList;
 
 public class User {
@@ -9,6 +11,8 @@ public class User {
     private String password;
     private States state;
     private ArrayList<Integer> idFavoritesRecipe;
+
+    private final DbHandlerUser dbHandlerUser = DbHandlerUser.getInstance();
 
     public User(Long id, String userName, String password) {
         this.id = id;
@@ -75,8 +79,15 @@ public class User {
         return idFavoritesRecipe;
     }
 
-    public void addFavoritesRecipe(Integer id){
-        idFavoritesRecipe.add(id);
+    public void addFavoritesRecipe(Integer recipeId){
+        if (idFavoritesRecipe.contains(recipeId)){
+            return;
+        }
+        if (idFavoritesRecipe == null) {
+            idFavoritesRecipe = new ArrayList<>();
+        }
+        idFavoritesRecipe.add(recipeId);
+        dbHandlerUser.updateUserFavorites(id, idFavoritesRecipe);
     }
 
     public void removeFavoritesRecipe(Integer id){
