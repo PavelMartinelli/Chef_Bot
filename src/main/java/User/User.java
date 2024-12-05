@@ -1,18 +1,36 @@
 package User;
 
 
+import DataBaseHandlers.DbHandlerUser;
+
+import java.util.ArrayList;
+
 public class User {
     private final Long id;
     private String userName;
     private String password;
     private States state;
+    private ArrayList<Integer> idFavoritesRecipe;
+
+    private final DbHandlerUser dbHandlerUser = DbHandlerUser.getInstance();
 
     public User(Long id, String userName, String password) {
         this.id = id;
         this.userName = userName;
         this.password = password;
         state = States.START;
+        idFavoritesRecipe = null;
     }
+
+    public User(Long id, String userName, String password, ArrayList<Integer> idFavoritesRecipe) {
+        this.id = id;
+        this.userName = userName;
+        this.password = password;
+        state = States.START;
+        this.idFavoritesRecipe = idFavoritesRecipe;
+    }
+
+
     public enum States {
         START,
         UNREGISTERED,
@@ -57,5 +75,25 @@ public class User {
         this.password = password;
     }
 
+    public ArrayList<Integer> getIdFavoritesRecipe() {
+        return idFavoritesRecipe;
+    }
+
+    public void addFavoritesRecipe(Integer recipeId){
+        if (idFavoritesRecipe == null) {
+            idFavoritesRecipe = new ArrayList<>();
+        }
+
+        if (idFavoritesRecipe.contains(recipeId)){
+            return;
+        }
+        idFavoritesRecipe.add(recipeId);
+        dbHandlerUser.updateUserFavorites(id, idFavoritesRecipe);
+    }
+
+    public void removeFavoritesRecipe(Integer recipeId){
+        idFavoritesRecipe.remove(recipeId);
+        dbHandlerUser.updateUserFavorites(id, idFavoritesRecipe);
+    }
 
 }

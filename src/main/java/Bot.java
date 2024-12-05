@@ -6,6 +6,8 @@ import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageCaption;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageMedia;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -19,6 +21,8 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
     private final CatalogMessage catalogContent= new CatalogMessage();
     private final WishlistMessage wishlistContent= new WishlistMessage();
     private final HelpMessage helpContent = new HelpMessage();
+
+    private final FavouritesEditMessage favouritesEditMessage= new FavouritesEditMessage();
 
     private final Recipes recipes = new Recipes();
     private final Users users = new Users();
@@ -42,6 +46,7 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
     private void handleTextMessage(Update update) {
 
         long chatId = update.getMessage().getChatId();
+        long userId = update.getMessage().getFrom().getId();
         String messageText = update.getMessage().getText();
 
         switch (messageText) {
@@ -64,6 +69,9 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
                 break;
             case "/wishlist":
                 execute(wishlistContent.createMessage(chatId));
+                for (int curId : users.getUser(userId).getIdFavoritesRecipe()) {
+                    execute(recipes.getRecipe(curId).createRecipeMessage(chatId, true));
+                }
                 break;
             case "/help":
                 execute(helpContent.createMessage(chatId));
@@ -76,6 +84,21 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
         String callData = update.getCallbackQuery().getData();
         long chatId = update.getCallbackQuery().getMessage().getChatId();
         int messageId = update.getCallbackQuery().getMessage().getMessageId();
+        long userId = update.getCallbackQuery().getFrom().getId();
+
+        if(callData.startsWith("/add_favourites")){
+            Integer favRecipeId = Integer.parseInt(callData.split("\\$")[1]);
+            users.getUser(userId).addFavoritesRecipe(favRecipeId);
+            execute(favouritesEditMessage.editRecipeCard(chatId, messageId, false));
+            return;
+        }
+
+        if(callData.startsWith("/del_favourites")){
+            Integer favRecipeId = Integer.parseInt(callData.split("\\$")[1]);
+            users.getUser(userId).removeFavoritesRecipe(favRecipeId);
+            execute(favouritesEditMessage.editRecipeCard(chatId, messageId, true));
+            return;
+        }
 
         switch (callData) {
             case "/search":
@@ -93,6 +116,9 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
                 break;
             case "/wishlist":
                 execute(wishlistContent.createEditMessage(chatId, messageId));
+                for (int curId : users.getUser(userId).getIdFavoritesRecipe()) {
+                    execute(recipes.getRecipe(curId).createRecipeMessage(chatId, true));
+                }
                 break;
             case "/help":
                 execute(helpContent.createEditMessage(chatId, messageId));
@@ -104,10 +130,30 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
                 sendResponse(chatId, messageId, "Неверный запрос");
         }
     }
+
+    private void execute(EditMessageMedia message) {
+        try {
+            telegramClient.execute(message);
+        } catch (TelegramApiException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void execute(EditMessageCaption message) {
+        try {
+            telegramClient.execute(message);
+        } catch (TelegramApiException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     private void execute(EditMessageText message) {
         try {
             telegramClient.execute(message);
         } catch (TelegramApiException e) {
+            System.out.println(e.getMessage());
             e.printStackTrace();
         }
     }

@@ -36,6 +36,7 @@ public class MenuMessage {
         rows.add(createRow("Случайный рецепт", "/random"));
         rows.add(createRow("Избранное", "/wishlist"));
         rows.add(createRow("Каталог", "/catalog"));
+        rows.add(createRow("Добавить рецепт", "/add"));
         rows.add(createRow("Справка", "/help"));
 
         return InlineKeyboardMarkup.builder().keyboard(rows).build();
