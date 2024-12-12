@@ -1,4 +1,4 @@
-package Message.SearchMessage;
+package Message.Search;
 
 import Message.BaseMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;

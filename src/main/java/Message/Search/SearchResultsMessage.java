@@ -1,4 +1,4 @@
-package Message.SearchMessage;
+package Message.Search;
 
 import Message.BaseMessage;
 import Recipe.Recipe;
