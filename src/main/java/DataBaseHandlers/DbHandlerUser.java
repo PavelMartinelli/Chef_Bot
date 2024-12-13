@@ -8,10 +8,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class DbHandlerUser {
-    private static final String CONNECTION_PATH = "jdbc:sqlite:DB/Recipes.db";
     private static Connection connection;
 
-    /////Синглтон
+    ///Синглтон
     private static class SingletonHolder{
         public static final DbHandlerUser HOLDER_INSTANCE;
         static {
@@ -25,11 +24,11 @@ public class DbHandlerUser {
     public static DbHandlerUser getInstance() {
         return DbHandlerUser.SingletonHolder.HOLDER_INSTANCE;
     }
-    ////Синглтон
+    ///Синглтон
+
 
     private DbHandlerUser() throws SQLException {
-        DriverManager.registerDriver(new JDBC());
-        connection = DriverManager.getConnection(CONNECTION_PATH);
+        connection = DbConnection.getInstance().getConnection();
     }
 
     public Map<Long, User> getALL() {
@@ -71,6 +70,7 @@ public class DbHandlerUser {
             return Collections.emptyMap();
         }
     }
+
     public void add(User user)  {
 
 
@@ -105,7 +105,7 @@ public class DbHandlerUser {
         }
     }
 
-    //TO DO Функия обновления избраного у пользователя по его id
+
     public void updateUserFavorites(Long userId, ArrayList<Integer> newFavoritesRecipeList) {
         try {
             String updatedFavoritesRecipeIds = newFavoritesRecipeList.stream()

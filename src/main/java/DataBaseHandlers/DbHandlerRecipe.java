@@ -7,11 +7,9 @@ import java.sql.*;
 import java.util.*;
 
 public class  DbHandlerRecipe  {
-
-    private static final String CONNECTION_PATH = "jdbc:sqlite:DB/Recipes.db";
     private static Connection connection;
 
-    /////Синглтон
+    ///Синглтон
     private static class SingletonHolder{
         public static final DbHandlerRecipe HOLDER_INSTANCE;
         static {
@@ -25,11 +23,11 @@ public class  DbHandlerRecipe  {
     public static DbHandlerRecipe getInstance() {
         return SingletonHolder.HOLDER_INSTANCE;
     }
-    ////Синглтон
+    ///Синглтон
+
 
     private DbHandlerRecipe() throws SQLException {
-        DriverManager.registerDriver(new JDBC());
-        connection = DriverManager.getConnection(CONNECTION_PATH);
+        connection = DbConnection.getInstance().getConnection();
     }
 
     public Map<Integer, Recipe> getALL() {
