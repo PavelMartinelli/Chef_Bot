@@ -1,44 +1,63 @@
-import Message.*;
-
+import Message.Recipe.RecipeMessage;
 import Recipe.*;
 import User.*;
+import Message.*;
+import Message.MenuMessage;
+import Message.Search.*;
+
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageCaption;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageMedia;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
+
 public class Bot implements LongPollingSingleThreadUpdateConsumer {
 
+    private final Recipes recipes;
+    private final Users users;
     private final TelegramClient telegramClient;
-    private final MenuMessage menuContent = new MenuMessage();
-    private final RandomMessage randomContent= new RandomMessage();
-    private final CatalogMessage catalogContent= new CatalogMessage();
-    private final WishlistMessage wishlistContent= new WishlistMessage();
-    private final HelpMessage helpContent = new HelpMessage();
-
-    private final FavouritesEditMessage favouritesEditMessage= new FavouritesEditMessage();
-
-    private final Recipes recipes = new Recipes();
-    private final Users users = new Users();
-
 
     public Bot(String botToken) {
-        telegramClient = new OkHttpTelegramClient(botToken);
+
+        this.telegramClient = new OkHttpTelegramClient(botToken);
+        this.recipes = new Recipes();
+        this.users = new Users();
+
     }
 
     @Override
     public void consume(Update update) {
-        System.out.println(update);
+
         if (update.hasMessage() && update.getMessage().hasText()) {
             handleTextMessage(update);
         } else if (update.hasCallbackQuery()) {
             handleCallbackQuery(update);
+        }
+
+    }
+
+    private void sendMessage(BaseMessage message, long chatId) {
+        try {
+            if (message.getPhotoUrlCheck() != null) {
+                telegramClient.execute(message.createMessageWithPhoto(chatId));
+            } else {
+                telegramClient.execute(message.createMessage(chatId));
+            }
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void editMessage(BaseMessage message, long chatId, int messageId) {
+        try {
+            if (message.getPhotoUrlCheck() != null) {
+                telegramClient.execute(message.createEditMessageWithPhoto(chatId, messageId));
+            } else {
+                telegramClient.execute(message.createEditMessage(chatId, messageId));
+            }
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
         }
     }
 
@@ -50,136 +69,50 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
         String messageText = update.getMessage().getText();
 
         switch (messageText) {
-            case "/start":
-                try {
-                    telegramClient.execute(menuContent.createMessage(chatId));
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case "/random":
-                execute(randomContent.createMessage(chatId));
-                execute(recipes.getRandomRecipe().createRecipeMessage(chatId));
-                break;
-            case "/catalog":
-                execute(catalogContent.createMessage(chatId));
-                for (int curId = 1; curId <= recipes.getSize(); curId++) {
-                    execute(recipes.getRecipe(curId).createRecipeMessage(chatId));
-                }
-                break;
-            case "/wishlist":
-                execute(wishlistContent.createMessage(chatId));
-                for (int curId : users.getUser(userId).getIdFavoritesRecipe()) {
-                    execute(recipes.getRecipe(curId).createRecipeMessage(chatId, true));
-                }
-                break;
-            case "/help":
-                execute(helpContent.createMessage(chatId));
-                break;
-
+            case "/start" -> sendMessage(new MenuMessage(), chatId);
+            case "/search" -> sendMessage(new SearchPromptMessage(), chatId);
+            case "/random" ->  sendMessage(new RecipeMessage(recipes.getRandomRecipe(),false),chatId);
+//            case "/catalog" -> sendMessage();
+            case "/wishlist" -> sendMessage(new WishlistMessage(users.getUser(userId).getFavoriteRecipes(recipes)),chatId);
+//            case "/add" ->  sendMessage();
+            case "/help" -> sendMessage(new HelpMessage(), chatId);
+            default -> System.out.println("Неверный запрос");
         }
+
     }
 
     private void handleCallbackQuery(Update update) {
-        String callData = update.getCallbackQuery().getData();
         long chatId = update.getCallbackQuery().getMessage().getChatId();
-        int messageId = update.getCallbackQuery().getMessage().getMessageId();
         long userId = update.getCallbackQuery().getFrom().getId();
+        int messageId = update.getCallbackQuery().getMessage().getMessageId();
+        String callbackData = update.getCallbackQuery().getData();
 
-        if(callData.startsWith("/add_favourites")){
-            Integer favRecipeId = Integer.parseInt(callData.split("\\$")[1]);
-            users.getUser(userId).addFavoritesRecipe(favRecipeId);
-            execute(favouritesEditMessage.editRecipeCard(chatId, messageId, false));
-            return;
-        }
 
-        if(callData.startsWith("/del_favourites")){
-            Integer favRecipeId = Integer.parseInt(callData.split("\\$")[1]);
-            users.getUser(userId).removeFavoritesRecipe(favRecipeId);
-            execute(favouritesEditMessage.editRecipeCard(chatId, messageId, true));
-            return;
-        }
-
-        switch (callData) {
-            case "/search":
-                sendResponse(chatId, messageId, "Поиск блюд, напитков. Вы нажали на первую кнопку.");
-                break;
-            case "/random":
-                execute(randomContent.createEditMessage(chatId, messageId));
-                execute(recipes.getRandomRecipe().createRecipeMessage(chatId));
-                break;
-            case "/catalog":
-                execute(catalogContent.createEditMessage(chatId, messageId));
-                for (int curId = 1; curId <= recipes.getSize(); curId++) {
-                    execute(recipes.getRecipe(curId).createRecipeMessage(chatId));
+        switch (callbackData) {
+            case "/start" -> sendMessage(new MenuMessage(), chatId);
+            case "/search" -> editMessage(new SearchPromptMessage(), chatId, messageId);
+            case "/random" -> editMessage(new RecipeMessage(recipes.getRandomRecipe(),false),chatId, messageId);
+//            case "/catalog" -> sendMessage();
+            case "/wishlist" -> editMessage(new WishlistMessage(users.getUser(userId).getFavoriteRecipes(recipes)), chatId, messageId);
+//            case "/add" ->  sendMessage();
+            case "/help" -> editMessage(new HelpMessage(), chatId, messageId);
+            case "/back" -> editMessage(new MenuMessage(), chatId, messageId);
+            default -> {
+                if (callbackData.startsWith("/add_favourites$")) {
+                    Integer recipeId = Integer.valueOf(callbackData.split("\\$")[1]); // Извлекаем ID
+                    users.getUser(userId).addFavoritesRecipe(recipeId); // Добавляем в избранное
+                    editMessage(new RecipeMessage(recipes.getRecipe(recipeId), true), chatId, messageId); // Отредактируем сообщение
+                } else if (callbackData.startsWith("/del_favourites$")) {
+                    Integer recipeId = Integer.valueOf(callbackData.split("\\$")[1]); // Извлекаем ID
+                    users.getUser(userId).removeFavoritesRecipe(recipeId); // Удаляем из избранного
+                    editMessage(new RecipeMessage(recipes.getRecipe(recipeId), false), chatId, messageId); // Отредактируем сообщение
+                } else {
+                    System.out.println("a");
                 }
-                break;
-            case "/wishlist":
-                execute(wishlistContent.createEditMessage(chatId, messageId));
-                for (int curId : users.getUser(userId).getIdFavoritesRecipe()) {
-                    execute(recipes.getRecipe(curId).createRecipeMessage(chatId, true));
-                }
-                break;
-            case "/help":
-                execute(helpContent.createEditMessage(chatId, messageId));
-                break;
-            case "/back":
-                execute(menuContent.createEditMessage(chatId, messageId));
-                break;
-            default:
-                sendResponse(chatId, messageId, "Неверный запрос");
-        }
-    }
+            }
 
-    private void execute(EditMessageMedia message) {
-        try {
-            telegramClient.execute(message);
-        } catch (TelegramApiException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
         }
-    }
 
-    private void execute(EditMessageCaption message) {
-        try {
-            telegramClient.execute(message);
-        } catch (TelegramApiException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    private void execute(EditMessageText message) {
-        try {
-            telegramClient.execute(message);
-        } catch (TelegramApiException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
-    }
-    private void execute(SendPhoto message) {
-        try {
-            telegramClient.execute(message);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-    }
-    private void execute(SendMessage message) {
-        try {
-            telegramClient.execute(message);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void sendResponse(long chatId, int messageId, String messageText) {
-        EditMessageText newMessage = EditMessageText.builder()
-                .chatId(String.valueOf(chatId))
-                .text(messageText)
-                .messageId(messageId >= 0 ? messageId : 0)
-                .build();
-
-        execute(newMessage);
     }
 
 }
