@@ -36,5 +36,5 @@ build/
 
 ### Mac OS ###
 .DS_Store
-/src/main/DB
+/DB
 /src/main/java/Token/Tg_Token.java

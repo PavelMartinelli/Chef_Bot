@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class DbHandlerUser {
-    private static final String CONNECTION_PATH = "jdbc:sqlite:E:\\ООП\\Chef_Bot\\src\\main\\DB\\Recipes.db";
+    private static final String CONNECTION_PATH = "jdbc:sqlite:DB/Recipes.db";
     private static Connection connection;
 
     /////Синглтон
