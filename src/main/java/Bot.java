@@ -80,7 +80,7 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
 
         long chatId = update.getMessage().getChatId();
         long userId = update.getMessage().getFrom().getId();
-        String userName = update.getCallbackQuery().getFrom().getUserName();
+        String userName = update.getMessage().getFrom().getUserName();
         String messageText = update.getMessage().getText();
 
         if (users.isUserNotInUsers(userId)){

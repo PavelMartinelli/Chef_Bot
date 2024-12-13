@@ -43,8 +43,9 @@ public class DbHandlerUser {
                 String password = resultSet.getString("password");
 
                 if (resultSet.getString("idFavoritesRecipe") == null ||
-                        resultSet.getString("idFavoritesRecipe").equals(" ")) {
-                    User user = new User(id, userName, password, null);
+                        resultSet.getString("idFavoritesRecipe").equals(" ") ||
+                        resultSet.getString("idFavoritesRecipe").isEmpty()) {
+                    User user = new User(id, userName, password);
                     userDictonary.put(id, user);
                 }
                 else {
