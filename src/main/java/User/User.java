@@ -1,9 +1,9 @@
 package User;
-
-
+import Recipe.*;
 import DataBaseHandlers.DbHandlerUser;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class User {
     private final Long id;
@@ -77,6 +77,20 @@ public class User {
 
     public ArrayList<Integer> getIdFavoritesRecipe() {
         return idFavoritesRecipe;
+    }
+
+    public List<Recipe> getFavoriteRecipes(Recipes recipes) {
+        List<Recipe> favoriteRecipes = new ArrayList<>();
+        for (int recipeId : idFavoritesRecipe) {
+            Recipe recipe = recipes.getRecipe(recipeId);
+            favoriteRecipes.add(recipe);
+
+        }
+        return favoriteRecipes;
+    }
+
+    public boolean isRecipeInFavorites(Recipe recipe) {
+        return idFavoritesRecipe.contains(recipe.getId());
     }
 
     public void addFavoritesRecipe(Integer recipeId){

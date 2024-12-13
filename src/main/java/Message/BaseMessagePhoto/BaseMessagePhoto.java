@@ -1,31 +1,38 @@
-package Message;
+package Message.BaseMessagePhoto;
 
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageMedia;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
+import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BaseMessage {
+public abstract class BaseMessagePhoto {
     protected abstract String getMessageText();
+    protected abstract String getPhotoUrl();
     protected abstract List<InlineKeyboardRow> createKeyboardRows();
 
-    public SendMessage createMessage(long chatId) {
-        return SendMessage.builder()
-                .chatId(chatId)
-                .text(getMessageText())
+    public SendPhoto createMessageWithPhoto(long chatId) {
+        return SendPhoto.builder()
+                .chatId(String.valueOf(chatId))
+                .photo(new InputFile(getPhotoUrl()))
+                .caption(getMessageText())
+                .parseMode("HTML")
                 .replyMarkup(createKeyboard())
                 .build();
     }
 
-    public EditMessageText createEditMessage(long chatId, int messageId) {
-        return EditMessageText.builder()
+    public EditMessageMedia createEditMessageWithPhoto(long chatId, int messageId) {
+        return EditMessageMedia.builder()
                 .chatId(String.valueOf(chatId))
                 .messageId(messageId)
-                .text(getMessageText())
+                .media(InputMediaPhoto.builder()
+                        .media(getPhotoUrl())
+                        .caption(getMessageText())
+                        .build())
                 .replyMarkup(createKeyboard())
                 .build();
     }

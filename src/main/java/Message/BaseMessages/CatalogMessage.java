@@ -1,16 +1,14 @@
-package Message;
+package Message.BaseMessages;
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HelpMessage extends BaseMessage {
+public class CatalogMessage extends BaseMessage {
     @Override
     protected String getMessageText() {
-        return "Это бот для приготовление всяких блюд.\n" +
-                "\nИнформация по всем функциям бота доступна по команде /start\n" +
-                "\nℹ Подробная инструкция будет потом\n";
+        return "Вы попали в Каталог. Пока в разработке.";
     }
 
     @Override
