@@ -43,7 +43,7 @@ public class DbHandlerUser {
                 String password = resultSet.getString("password");
 
                 if (resultSet.getString("idFavoritesRecipe") == null ||
-                        resultSet.getString("idFavoritesRecipe").equals("")) {
+                        resultSet.getString("idFavoritesRecipe").equals(" ")) {
                     User user = new User(id, userName, password, null);
                     userDictonary.put(id, user);
                 }
@@ -81,14 +81,17 @@ public class DbHandlerUser {
             statement.setObject(2, user.getUserName());
             statement.setObject(3, user.getPassword());
 
-            String favoritesRecipeIds = user.getIdFavoritesRecipe().stream()
-                    .map(String::valueOf)
-                    .collect(Collectors.joining(","));
+            if(user.getIdFavoritesRecipe() == null){
+                statement.setString(4, " ");
+            }
+            else {
+                String favoritesRecipeIds = user.getIdFavoritesRecipe().stream()
+                        .map(String::valueOf)
+                        .collect(Collectors.joining(","));
+            }
 
-            statement.setString(4, favoritesRecipeIds);
             statement.execute();
 
-            statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }

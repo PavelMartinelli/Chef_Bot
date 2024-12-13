@@ -19,7 +19,7 @@ public class User {
         this.userName = userName;
         this.password = password;
         state = States.START;
-        idFavoritesRecipe = null;
+        idFavoritesRecipe = new ArrayList<>();
     }
 
     public User(Long id, String userName, String password, ArrayList<Integer> idFavoritesRecipe) {
