@@ -1,4 +1,4 @@
-package Message;
+package Message.BaseMessagePhoto;
 
 import Recipe.Recipe;
 
@@ -7,7 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecipeMessage extends BaseMessage {
+public class RecipeMessage extends BaseMessagePhoto {
     private final Recipe recipe;
     private final boolean isInFavourites;
 
@@ -35,7 +35,7 @@ public class RecipeMessage extends BaseMessage {
                 isInFavourites ? "Удалить из избранного" : "Добавить в избранное",
                 (isInFavourites ? "/del_favourites$" : "/add_favourites$") + recipe.getId()
         ));
-        rows.add(createRow("На главное меню", "/back"));
+        rows.add(createRow("На главное меню", "/start"));
         return rows;
     }
 }

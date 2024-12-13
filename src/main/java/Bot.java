@@ -1,9 +1,10 @@
-import Message.Recipe.RecipeMessage;
+import Message.BaseMessages.*;
+import Message.BaseMessages.CatalogMessage;
+import Message.BaseMessagePhoto.RecipeMessage;
 import Recipe.*;
 import User.*;
-import Message.*;
-import Message.MenuMessage;
-import Message.Search.*;
+import Message.BaseMessages.BaseMessage;
+import Message.BaseMessagePhoto.BaseMessagePhoto;
 
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
@@ -11,18 +12,23 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Bot implements LongPollingSingleThreadUpdateConsumer {
 
     private final Recipes recipes;
     private final Users users;
     private final TelegramClient telegramClient;
+    private final Map<Long, String> state;
 
     public Bot(String botToken) {
 
         this.telegramClient = new OkHttpTelegramClient(botToken);
         this.recipes = new Recipes();
         this.users = new Users();
+        this.state = new HashMap<>();
 
     }
 
@@ -39,11 +45,15 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
 
     private void sendMessage(BaseMessage message, long chatId) {
         try {
-            if (message.getPhotoUrlCheck() != null) {
-                telegramClient.execute(message.createMessageWithPhoto(chatId));
-            } else {
-                telegramClient.execute(message.createMessage(chatId));
-            }
+            telegramClient.execute(message.createMessage(chatId));
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendMessageWithPhoto(BaseMessagePhoto message, long chatId) {
+        try {
+            telegramClient.execute(message.createMessageWithPhoto(chatId));
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
@@ -51,11 +61,15 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
 
     private void editMessage(BaseMessage message, long chatId, int messageId) {
         try {
-            if (message.getPhotoUrlCheck() != null) {
-                telegramClient.execute(message.createEditMessageWithPhoto(chatId, messageId));
-            } else {
-                telegramClient.execute(message.createEditMessage(chatId, messageId));
-            }
+            telegramClient.execute(message.createEditMessage(chatId, messageId));
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void editMessageWithPhoto(BaseMessagePhoto message, long chatId, int messageId) {
+        try {
+            telegramClient.execute(message.createEditMessageWithPhoto(chatId, messageId));
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
@@ -71,14 +85,21 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
         switch (messageText) {
             case "/start" -> sendMessage(new MenuMessage(), chatId);
             case "/search" -> sendMessage(new SearchPromptMessage(), chatId);
-            case "/random" ->  sendMessage(new RecipeMessage(recipes.getRandomRecipe(),false),chatId);
-//            case "/catalog" -> sendMessage();
+            case "/random" -> {
+                Recipe recipe = recipes.getRandomRecipe();
+                sendMessageWithPhoto(new RecipeMessage(recipe, users.getUser(userId).isRecipeInFavorites(recipe)),chatId);
+            }
+            case "/catalog" -> sendMessage( new CatalogMessage(),chatId);
             case "/wishlist" -> sendMessage(new WishlistMessage(users.getUser(userId).getFavoriteRecipes(recipes)),chatId);
-//            case "/add" ->  sendMessage();
             case "/help" -> sendMessage(new HelpMessage(), chatId);
-            default -> System.out.println("Неверный запрос");
+            default -> {
+                if (state.containsKey(chatId) && "awaiting_query".equals(state.get(chatId))) {
+                    state.remove(chatId);
+                    List<Recipe> results = recipes.searchRecipes(messageText);
+                    sendMessage(new SearchResultsMessage(results), chatId);
+                }
+            }
         }
-
     }
 
     private void handleCallbackQuery(Update update) {
@@ -87,28 +108,35 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
         int messageId = update.getCallbackQuery().getMessage().getMessageId();
         String callbackData = update.getCallbackQuery().getData();
 
-
-        switch (callbackData) {
+        if (callbackData.startsWith("/add_favourites$")) {
+            Integer recipeId = Integer.valueOf(callbackData.split("\\$")[1]);
+            users.getUser(userId).addFavoritesRecipe(recipeId);
+            editMessageWithPhoto(new RecipeMessage(recipes.getRecipe(recipeId), true), chatId, messageId);
+        } else if (callbackData.startsWith("/del_favourites$")) {
+            Integer recipeId = Integer.valueOf(callbackData.split("\\$")[1]);
+            users.getUser(userId).removeFavoritesRecipe(recipeId);
+            editMessageWithPhoto(new RecipeMessage(recipes.getRecipe(recipeId), false), chatId, messageId);
+        } else if (callbackData.startsWith("view_recipe$")) {
+            Integer recipeId = Integer.valueOf(callbackData.split("\\$")[1]);
+            Recipe recipe = recipes.getRecipe(recipeId);
+            editMessageWithPhoto(new RecipeMessage(recipe, users.getUser(userId).isRecipeInFavorites(recipe)), chatId
+                    , messageId);
+        } else switch (callbackData) {
             case "/start" -> sendMessage(new MenuMessage(), chatId);
-            case "/search" -> editMessage(new SearchPromptMessage(), chatId, messageId);
-            case "/random" -> editMessage(new RecipeMessage(recipes.getRandomRecipe(),false),chatId, messageId);
-//            case "/catalog" -> sendMessage();
+            case "/search" -> {
+                state.put(chatId, "awaiting_query");
+                editMessage(new SearchPromptMessage(), chatId, messageId);
+            }
+            case "/random" -> {
+                Recipe recipe = recipes.getRandomRecipe();
+                editMessageWithPhoto(new RecipeMessage(recipe, users.getUser(userId).isRecipeInFavorites(recipe)),chatId, messageId);
+            }
+            case "/catalog" -> sendMessage( new CatalogMessage(),chatId);
             case "/wishlist" -> editMessage(new WishlistMessage(users.getUser(userId).getFavoriteRecipes(recipes)), chatId, messageId);
-//            case "/add" ->  sendMessage();
             case "/help" -> editMessage(new HelpMessage(), chatId, messageId);
             case "/back" -> editMessage(new MenuMessage(), chatId, messageId);
             default -> {
-                if (callbackData.startsWith("/add_favourites$")) {
-                    Integer recipeId = Integer.valueOf(callbackData.split("\\$")[1]); // Извлекаем ID
-                    users.getUser(userId).addFavoritesRecipe(recipeId); // Добавляем в избранное
-                    editMessage(new RecipeMessage(recipes.getRecipe(recipeId), true), chatId, messageId); // Отредактируем сообщение
-                } else if (callbackData.startsWith("/del_favourites$")) {
-                    Integer recipeId = Integer.valueOf(callbackData.split("\\$")[1]); // Извлекаем ID
-                    users.getUser(userId).removeFavoritesRecipe(recipeId); // Удаляем из избранного
-                    editMessage(new RecipeMessage(recipes.getRecipe(recipeId), false), chatId, messageId); // Отредактируем сообщение
-                } else {
-                    System.out.println("a");
-                }
+                System.out.println("Неработает");
             }
 
         }

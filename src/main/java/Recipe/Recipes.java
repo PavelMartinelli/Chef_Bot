@@ -4,6 +4,8 @@ import DataBaseHandlers.DbHandlerRecipe;
 import java.util.Random;
 
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Recipes {
     private final Map<Integer, Recipe> recipesDictonary;
@@ -44,4 +46,15 @@ public class Recipes {
         dbHandlerRecipe.delete(id);
     }
 
+    public List<Recipe> searchRecipes(String query) {
+        List<Recipe> results = new ArrayList<>();
+
+        for (Recipe recipe : recipesDictonary.values()) {
+            if (recipe.getTitle().toLowerCase().contains(query.toLowerCase()) ||
+                    recipe.getIngredients().stream().anyMatch(ingredient -> ingredient.toLowerCase().contains(query.toLowerCase()))) {
+                results.add(recipe);
+            }
+        }
+        return results;
+    }
 }
