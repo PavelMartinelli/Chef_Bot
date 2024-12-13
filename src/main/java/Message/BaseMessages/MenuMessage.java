@@ -1,4 +1,4 @@
-package Message;
+package Message.BaseMessages;
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 
@@ -18,7 +18,6 @@ public class MenuMessage extends BaseMessage {
         rows.add(createRow("Случайный рецепт", "/random"));
         rows.add(createRow("Избранное", "/wishlist"));
         rows.add(createRow("Каталог", "/catalog"));
-        rows.add(createRow("Добавить рецепт", "/add"));
         rows.add(createRow("Справка", "/help"));
         return rows;
     }

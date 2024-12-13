@@ -1,6 +1,5 @@
-package Message.Wishlist;
+package Message.BaseMessages;
 
-import Message.BaseMessage;
 import Recipe.Recipe;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 

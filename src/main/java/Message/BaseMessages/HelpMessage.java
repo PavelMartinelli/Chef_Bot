@@ -1,4 +1,4 @@
-package Message;
+package Message.BaseMessages;
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 
