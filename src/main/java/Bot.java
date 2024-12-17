@@ -21,14 +21,14 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
     private final Recipes recipes;
     private final Users users;
     private final TelegramClient telegramClient;
-    private final Map<Long, String> state;
+    private final Map<Long, String> userState ;
 
     public Bot(String botToken) {
 
         this.telegramClient = new OkHttpTelegramClient(botToken);
         this.recipes = new Recipes();
         this.users = new Users();
-        this.state = new HashMap<>();
+        this.userState  = new HashMap<>();
 
     }
 
@@ -99,8 +99,8 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
             case "/wishlist" -> sendMessage(new WishlistMessage(users.getUser(userId).getFavoriteRecipes(recipes)),chatId);
             case "/help" -> sendMessage(new HelpMessage(), chatId);
             default -> {
-                if (state.containsKey(chatId) && "awaiting_query".equals(state.get(chatId))) {
-                    state.remove(chatId);
+                if (userState.containsKey(chatId) && "awaiting_query".equals(userState.get(chatId))) {
+                    userState.remove(chatId);
                     List<Recipe> results = recipes.searchRecipes(messageText);
                     sendMessage(new SearchResultsMessage(results), chatId);
                 }
@@ -136,7 +136,7 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
         } else switch (callbackData) {
             case "/start" -> sendMessage(new MenuMessage(), chatId);
             case "/search" -> {
-                state.put(chatId, "awaiting_query");
+                userState.put(chatId, "awaiting_query");
                 editMessage(new SearchPromptMessage(), chatId, messageId);
             }
             case "/random" -> {
