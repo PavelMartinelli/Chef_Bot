@@ -80,7 +80,13 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
 
         long chatId = update.getMessage().getChatId();
         long userId = update.getMessage().getFrom().getId();
+        String userName = update.getMessage().getFrom().getUserName();
         String messageText = update.getMessage().getText();
+
+        if (users.isUserNotInUsers(userId)){
+            User curUser = new User(userId, userName, null);
+            users.addUser(curUser);
+        }
 
         switch (messageText) {
             case "/start" -> sendMessage(new MenuMessage(), chatId);
@@ -105,8 +111,14 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
     private void handleCallbackQuery(Update update) {
         long chatId = update.getCallbackQuery().getMessage().getChatId();
         long userId = update.getCallbackQuery().getFrom().getId();
+        String userName = update.getCallbackQuery().getFrom().getUserName();
         int messageId = update.getCallbackQuery().getMessage().getMessageId();
         String callbackData = update.getCallbackQuery().getData();
+
+        if (users.isUserNotInUsers(userId)){
+            User curUser = new User(userId, userName, null);
+            users.addUser(curUser);
+        }
 
         if (callbackData.startsWith("/add_favourites$")) {
             Integer recipeId = Integer.valueOf(callbackData.split("\\$")[1]);

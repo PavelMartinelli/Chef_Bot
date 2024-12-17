@@ -18,6 +18,10 @@ public class Users {
         return usersDictonary.get(userId);
     }
 
+    public boolean isUserNotInUsers(Long userId){
+        return !usersDictonary.containsKey(userId);
+    }
+
     public void deleteUser(Long userId) {
         usersDictonary.remove(userId);
 

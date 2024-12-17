@@ -8,10 +8,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class DbHandlerUser {
-    private static final String CONNECTION_PATH = "jdbc:sqlite:E:\\ООП\\Chef_Bot\\src\\main\\DB\\Recipes.db";
     private static Connection connection;
 
-    /////Синглтон
+    ///Синглтон
     private static class SingletonHolder{
         public static final DbHandlerUser HOLDER_INSTANCE;
         static {
@@ -25,11 +24,11 @@ public class DbHandlerUser {
     public static DbHandlerUser getInstance() {
         return DbHandlerUser.SingletonHolder.HOLDER_INSTANCE;
     }
-    ////Синглтон
+    ///Синглтон
+
 
     private DbHandlerUser() throws SQLException {
-        DriverManager.registerDriver(new JDBC());
-        connection = DriverManager.getConnection(CONNECTION_PATH);
+        connection = DbConnection.getInstance().getConnection();
     }
 
     public Map<Long, User> getALL() {
@@ -44,8 +43,9 @@ public class DbHandlerUser {
                 String password = resultSet.getString("password");
 
                 if (resultSet.getString("idFavoritesRecipe") == null ||
-                        resultSet.getString("idFavoritesRecipe").equals("")) {
-                    User user = new User(id, userName, password, null);
+                        resultSet.getString("idFavoritesRecipe").equals(" ") ||
+                        resultSet.getString("idFavoritesRecipe").isEmpty()) {
+                    User user = new User(id, userName, password);
                     userDictonary.put(id, user);
                 }
                 else {
@@ -71,6 +71,7 @@ public class DbHandlerUser {
             return Collections.emptyMap();
         }
     }
+
     public void add(User user)  {
 
 
@@ -81,14 +82,17 @@ public class DbHandlerUser {
             statement.setObject(2, user.getUserName());
             statement.setObject(3, user.getPassword());
 
-            String favoritesRecipeIds = user.getIdFavoritesRecipe().stream()
-                    .map(String::valueOf)
-                    .collect(Collectors.joining(","));
+            if(user.getIdFavoritesRecipe() == null){
+                statement.setString(4, " ");
+            }
+            else {
+                String favoritesRecipeIds = user.getIdFavoritesRecipe().stream()
+                        .map(String::valueOf)
+                        .collect(Collectors.joining(","));
+            }
 
-            statement.setString(4, favoritesRecipeIds);
             statement.execute();
 
-            statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -105,7 +109,7 @@ public class DbHandlerUser {
         }
     }
 
-    //TO DO Функия обновления избраного у пользователя по его id
+
     public void updateUserFavorites(Long userId, ArrayList<Integer> newFavoritesRecipeList) {
         try {
             String updatedFavoritesRecipeIds = newFavoritesRecipeList.stream()
