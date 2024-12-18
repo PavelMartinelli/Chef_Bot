@@ -32,6 +32,7 @@ public abstract class BaseMessagePhoto {
                 .media(InputMediaPhoto.builder()
                         .media(getPhotoUrl())
                         .caption(getMessageText())
+                        .parseMode("HTML")
                         .build())
                 .replyMarkup(createKeyboard())
                 .build();

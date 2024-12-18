@@ -17,16 +17,16 @@ public class WishlistMessage extends BaseMessage {
     @Override
     protected String getMessageText() {
         if (wishlistResults.isEmpty()) {
-            return "Рецепты не найдены. Вы пока ничего не добавили в избранное.";
+            return "🚫 Рецепты не найдены. Вы пока ничего не добавили в избранное. 💔";
         }
-        return "Ваши избранные рецепты ниже:";
+        return "⭐ Ваши избранные рецепты ниже:";
     }
 
     @Override
     protected List<InlineKeyboardRow> createKeyboardRows() {
         List<InlineKeyboardRow> rows = new ArrayList<>();
         for (Recipe recipe : wishlistResults) {
-            rows.add(createRow(recipe.getTitle(), "/view_recipe$" + recipe.getId()));
+            rows.add(createRow(recipe.getTitle() + " 🍴", "/view_recipe$" + recipe.getId()));
         }
         rows.add(createRow("Вернуться в главное меню", "/back"));
         return rows;
