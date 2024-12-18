@@ -26,7 +26,7 @@ public class SearchResultsMessage extends BaseMessage {
     protected List<InlineKeyboardRow> createKeyboardRows() {
         List<InlineKeyboardRow> rows = new ArrayList<>();
         for (Recipe recipe : searchResults) {
-            rows.add(createRow(recipe.getTitle(), "view_recipe$" + recipe.getId()));
+            rows.add(createRow(recipe.getTitle(), "/view_recipe$" + recipe.getId()));
         }
         rows.add(createRow("На главное меню", "/back"));
         return rows;
