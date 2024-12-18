@@ -17,7 +17,7 @@ public class SearchResultsMessage extends BaseMessage {
     @Override
     protected String getMessageText() {
         if (searchResults.isEmpty()) {
-            return "Рецепты не найдены. Попробуйте другой запрос.";
+            return "Рецепты не найдены. Попробуйте другой запрос:";
         }
         return "Найдено совпадений: " + searchResults.size() + "\nВыберите рецепт из списка ниже:";
     }

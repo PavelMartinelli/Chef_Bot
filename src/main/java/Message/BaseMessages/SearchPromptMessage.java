@@ -9,7 +9,7 @@ public class SearchPromptMessage extends BaseMessage {
 
     @Override
     protected String getMessageText() {
-        return "Введите название блюда или ингредиент для поиска:";
+        return "Введите название блюда для поиска:";
     }
 
     @Override
