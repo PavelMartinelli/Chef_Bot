@@ -21,14 +21,12 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
     private final Recipes recipes;
     private final Users users;
     private final TelegramClient telegramClient;
-    private final Map<Long, String> userState ;
 
     public Bot(String botToken) {
 
         this.telegramClient = new OkHttpTelegramClient(botToken);
         this.recipes = new Recipes();
         this.users = new Users();
-        this.userState  = new HashMap<>();
 
     }
 
@@ -83,30 +81,57 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
         String userName = update.getMessage().getFrom().getUserName();
         String messageText = update.getMessage().getText();
 
-        if (users.isUserNotInUsers(userId)){
+        if (users.isUserNotInUsers(userId)) {
             User curUser = new User(userId, userName, null);
             users.addUser(curUser);
         }
 
+        User currentUser = users.getUser(userId);
+
+        switch (currentUser.getState()) {
+            case START -> handleStartCommand(messageText, chatId, currentUser);
+            case AWAITING_SEARCH_RECIPE_NAME -> handleRecipeSearch(messageText, chatId, currentUser);
+            default -> System.out.println("Неработает1");
+        }
+
+    }
+
+    private void handleRecipeSearch(String messageText, long chatId, User user) {
+        List<Recipe> results = recipes.searchRecipes(messageText);
+        if (!results.isEmpty()) {
+            user.setState(User.States.START);
+        }
+        sendMessage(new SearchResultsMessage(results), chatId);
+    }
+
+    private void handleStartCommand(String messageText, long chatId, User user) {
         switch (messageText) {
-            case "/start" -> sendMessage(new MenuMessage(), chatId);
-            case "/search" -> sendMessage(new SearchPromptMessage(), chatId);
-            case "/random" -> {
-                Recipe recipe = recipes.getRandomRecipe();
-                sendMessageWithPhoto(new RecipeMessage(recipe, users.getUser(userId).isRecipeInFavorites(recipe)),chatId);
-            }
-            case "/catalog" -> sendMessage( new CatalogMessage(),chatId);
-            case "/wishlist" -> sendMessage(new WishlistMessage(users.getUser(userId).getFavoriteRecipes(recipes)),chatId);
-            case "/help" -> sendMessage(new HelpMessage(), chatId);
-            default -> {
-                if (userState.containsKey(chatId) && "awaiting_query".equals(userState.get(chatId))) {
-                    userState.remove(chatId);
-                    List<Recipe> results = recipes.searchRecipes(messageText);
-                    sendMessage(new SearchResultsMessage(results), chatId);
-                }
-            }
+            case "/start":
+                sendMessage(new MenuMessage(), chatId);
+                break;
+            case "/search":
+                user.setState(User.States.AWAITING_SEARCH_RECIPE_NAME);
+                sendMessage(new SearchPromptMessage(), chatId);
+                break;
+            case "/random":
+                Recipe randomRecipe = recipes.getRandomRecipe();
+                sendMessageWithPhoto(new RecipeMessage(randomRecipe, user.isRecipeInFavorites(randomRecipe)), chatId);
+                break;
+            case "/catalog":
+                sendMessage(new CatalogMessage(), chatId);
+                break;
+            case "/wishlist":
+                sendMessage(new WishlistMessage(user.getFavoriteRecipes(recipes)), chatId);
+                break;
+            case "/help":
+                sendMessage(new HelpMessage(), chatId);
+                break;
+            default:
+                System.out.println("Неработает");
+                break;
         }
     }
+
 
     private void handleCallbackQuery(Update update) {
         long chatId = update.getCallbackQuery().getMessage().getChatId();
@@ -115,44 +140,77 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
         int messageId = update.getCallbackQuery().getMessage().getMessageId();
         String callbackData = update.getCallbackQuery().getData();
 
-        if (users.isUserNotInUsers(userId)){
+        if (users.isUserNotInUsers(userId)) {
             User curUser = new User(userId, userName, null);
             users.addUser(curUser);
         }
 
-        if (callbackData.startsWith("/add_favourites$")) {
-            Integer recipeId = Integer.valueOf(callbackData.split("\\$")[1]);
-            users.getUser(userId).addFavoritesRecipe(recipeId);
-            editMessageWithPhoto(new RecipeMessage(recipes.getRecipe(recipeId), true), chatId, messageId);
-        } else if (callbackData.startsWith("/del_favourites$")) {
-            Integer recipeId = Integer.valueOf(callbackData.split("\\$")[1]);
-            users.getUser(userId).removeFavoritesRecipe(recipeId);
-            editMessageWithPhoto(new RecipeMessage(recipes.getRecipe(recipeId), false), chatId, messageId);
-        } else if (callbackData.startsWith("view_recipe$")) {
-            Integer recipeId = Integer.valueOf(callbackData.split("\\$")[1]);
-            Recipe recipe = recipes.getRecipe(recipeId);
-            editMessageWithPhoto(new RecipeMessage(recipe, users.getUser(userId).isRecipeInFavorites(recipe)), chatId
-                    , messageId);
-        } else switch (callbackData) {
-            case "/start" -> sendMessage(new MenuMessage(), chatId);
-            case "/search" -> {
-                userState.put(chatId, "awaiting_query");
-                editMessage(new SearchPromptMessage(), chatId, messageId);
-            }
-            case "/random" -> {
-                Recipe recipe = recipes.getRandomRecipe();
-                editMessageWithPhoto(new RecipeMessage(recipe, users.getUser(userId).isRecipeInFavorites(recipe)),chatId, messageId);
-            }
-            case "/catalog" -> sendMessage( new CatalogMessage(),chatId);
-            case "/wishlist" -> editMessage(new WishlistMessage(users.getUser(userId).getFavoriteRecipes(recipes)), chatId, messageId);
-            case "/help" -> editMessage(new HelpMessage(), chatId, messageId);
-            case "/back" -> editMessage(new MenuMessage(), chatId, messageId);
-            default -> {
-                System.out.println("Неработает");
-            }
+        User currentUser = users.getUser(userId);
 
+        if (callbackData.startsWith("/add_favourites$") || callbackData.startsWith("/del_favourites$") || callbackData.startsWith("/view_recipe$")) {
+            handleRecipeActions(callbackData, userId, chatId, messageId);
+        } else {
+            handleMenuActions(callbackData, userId, chatId, messageId, currentUser);
         }
+    }
 
+    private Integer extractRecipeId(String callbackData) {
+        try {
+            return Integer.valueOf(callbackData.split("\\$")[1]);
+        } catch (Exception e) {
+            System.err.println("Ошибка извлечения recipeId: " + e.getMessage());
+            return null;
+        }
+    }
+
+    private void handleRecipeActions(String callbackData, long userId, long chatId, int messageId) {
+        Integer recipeId = extractRecipeId(callbackData);
+        switch (callbackData.split("\\$")[0]) {
+            case "/add_favourites":
+                users.getUser(userId).addFavoritesRecipe(recipeId);
+                editMessageWithPhoto(new RecipeMessage(recipes.getRecipe(recipeId), true), chatId, messageId);
+                break;
+            case "/del_favourites":
+                users.getUser(userId).removeFavoritesRecipe(recipeId);
+                editMessageWithPhoto(new RecipeMessage(recipes.getRecipe(recipeId), false), chatId, messageId);
+                break;
+            case "/view_recipe":
+                Recipe recipe = recipes.getRecipe(recipeId);
+                editMessageWithPhoto(new RecipeMessage(recipe, users.getUser(userId).isRecipeInFavorites(recipe)), chatId, messageId);
+                break;
+        }
+    }
+
+    private void handleMenuActions(String callbackData, long userId, long chatId, int messageId, User currentUser) {
+        switch (callbackData) {
+            case "/start":
+                sendMessage(new MenuMessage(), chatId);
+                break;
+            case "/search":
+                currentUser.setState(User.States.AWAITING_SEARCH_RECIPE_NAME);
+                editMessage(new SearchPromptMessage(), chatId, messageId);
+                break;
+            case "/random":
+                Recipe randomRecipe = recipes.getRandomRecipe();
+                editMessageWithPhoto(new RecipeMessage(randomRecipe, currentUser.isRecipeInFavorites(randomRecipe)), chatId, messageId);
+                break;
+            case "/catalog":
+                sendMessage(new CatalogMessage(), chatId);
+                break;
+            case "/wishlist":
+                editMessage(new WishlistMessage(currentUser.getFavoriteRecipes(recipes)), chatId, messageId);
+                break;
+            case "/help":
+                editMessage(new HelpMessage(), chatId, messageId);
+                break;
+            case "/back":
+                currentUser.setState(User.States.START);
+                editMessage(new MenuMessage(), chatId, messageId);
+                break;
+            default:
+                sendMessage(new MenuMessage(), chatId);
+                break;
+        }
     }
 
 }
