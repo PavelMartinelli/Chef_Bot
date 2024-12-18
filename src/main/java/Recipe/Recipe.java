@@ -15,7 +15,7 @@ public class Recipe {
     private String title;
     private String description;
     private String url_photo;
-    private ArrayList<String> ingredients;
+    private List<String> ingredients;
 
     public Recipe(Integer id, String title, String description, String url_photo, ArrayList<String> ingredients) {
         this.id = id;
@@ -25,7 +25,7 @@ public class Recipe {
         this.ingredients = ingredients;
     }
 
-    public Recipe(String title, String description, String url_photo, ArrayList<String> ingredients) {
+    public Recipe(String title, String description, String url_photo, List<String> ingredients) {
         this.id = title.hashCode();
         this.title = title;
         this.description = description;
@@ -61,11 +61,11 @@ public class Recipe {
         this.url_photo = url_photo;
     }
 
-    public ArrayList<String> getIngredients() {
+    public List<String> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(ArrayList<String> ingredients) {
+    public void setIngredients(List<String> ingredients) {
         this.ingredients = ingredients;
     }
 
