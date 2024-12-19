@@ -20,7 +20,7 @@ public class RecipeMessage extends BaseMessagePhoto {
         return "<b>🍽️ " + recipe.getTitle() + "</b>\n\n" +
                 "📝 <i>" + recipe.getDescription() + "</i>\n\n" +
                 "🛒 <b>Ингредиенты:</b>\n" +
-                "<pre>" + String.join("\n", recipe.getIngredients()) + "</pre>";
+                "<pre> " + String.join("\n", recipe.getIngredients()) + "</pre>";
     }
 
     @Override
