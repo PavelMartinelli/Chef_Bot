@@ -15,6 +15,7 @@ public abstract class BaseMessage {
     public SendMessage createMessage(long chatId) {
         return SendMessage.builder()
                 .chatId(chatId)
+                .parseMode("HTML")
                 .text(getMessageText())
                 .replyMarkup(createKeyboard())
                 .build();
@@ -26,6 +27,7 @@ public abstract class BaseMessage {
                 .chatId(String.valueOf(chatId))
                 .messageId(messageId)
                 .text(getMessageText())
+                .parseMode("HTML")
                 .replyMarkup(createKeyboard())
                 .build();
     }
