@@ -1,4 +1,4 @@
-package message.BaseMessagePhoto;
+package com.github.PavelAnton.Chef_Bot.message.BaseMessagePhoto;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageMedia;

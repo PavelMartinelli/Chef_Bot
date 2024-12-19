@@ -1,6 +1,6 @@
-package dataBaseHandlers;
+package com.github.PavelAnton.Chef_Bot.dataBaseHandlers;
 
-import user.*;
+import com.github.PavelAnton.Chef_Bot.user.User;
 
 import java.sql.*;
 import java.util.*;

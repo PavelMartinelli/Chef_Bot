@@ -1,6 +1,6 @@
-package recipe;
+package com.github.PavelAnton.Chef_Bot.recipe;
 
-import dataBaseHandlers.DbHandlerRecipe;
+import com.github.PavelAnton.Chef_Bot.dataBaseHandlers.DbHandlerRecipe;
 
 import java.util.Random;
 

@@ -1,6 +1,7 @@
-package user;
-import recipe.*;
-import dataBaseHandlers.DbHandlerUser;
+package com.github.PavelAnton.Chef_Bot.user;
+import com.github.PavelAnton.Chef_Bot.recipe.Recipe;
+import com.github.PavelAnton.Chef_Bot.recipe.Recipes;
+import com.github.PavelAnton.Chef_Bot.dataBaseHandlers.DbHandlerUser;
 
 import java.util.ArrayList;
 import java.util.List;

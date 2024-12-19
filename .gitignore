@@ -37,4 +37,4 @@ build/
 ### Mac OS ###
 .DS_Store
 /DB
-/src/main/java/token/Tg_Token.java
+/src/main/java/com/github/PavelAnton/Chef_Bot/token/Tg_Token.java

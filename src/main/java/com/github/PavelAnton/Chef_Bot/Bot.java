@@ -1,7 +1,12 @@
-import message.BaseMessages.*;
-import message.BaseMessagePhoto.*;
-import recipe.*;
-import user.*;
+package com.github.PavelAnton.Chef_Bot;
+
+import com.github.PavelAnton.Chef_Bot.message.BaseMessagePhoto.BaseMessagePhoto;
+import com.github.PavelAnton.Chef_Bot.message.BaseMessagePhoto.RecipeMessage;
+import com.github.PavelAnton.Chef_Bot.message.BaseMessages.*;
+import com.github.PavelAnton.Chef_Bot.recipe.Recipe;
+import com.github.PavelAnton.Chef_Bot.recipe.Recipes;
+import com.github.PavelAnton.Chef_Bot.user.User;
+import com.github.PavelAnton.Chef_Bot.user.Users;
 
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;

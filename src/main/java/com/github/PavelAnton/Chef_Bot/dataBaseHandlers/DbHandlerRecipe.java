@@ -1,6 +1,6 @@
-package dataBaseHandlers;
+package com.github.PavelAnton.Chef_Bot.dataBaseHandlers;
 
-import recipe.Recipe;
+import com.github.PavelAnton.Chef_Bot.recipe.Recipe;
 
 import java.sql.*;
 import java.util.*;

@@ -1,4 +1,4 @@
-package recipe;
+package com.github.PavelAnton.Chef_Bot.recipe;
 
 import java.util.ArrayList;
 import java.util.List;

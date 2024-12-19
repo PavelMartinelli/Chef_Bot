@@ -1,4 +1,6 @@
-import token.Tg_Token;
+package com.github.PavelAnton.Chef_Bot;
+
+import com.github.PavelAnton.Chef_Bot.token.Tg_Token;
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
 
 public class Main {
