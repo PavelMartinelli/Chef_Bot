@@ -1,4 +1,4 @@
-import Token.Tg_Token;
+import token.Tg_Token;
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
 
 public class Main {

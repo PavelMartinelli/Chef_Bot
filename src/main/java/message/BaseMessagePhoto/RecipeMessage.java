@@ -1,6 +1,6 @@
-package Message.BaseMessagePhoto;
+package message.BaseMessagePhoto;
 
-import Recipe.Recipe;
+import recipe.Recipe;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 
 import java.util.ArrayList;

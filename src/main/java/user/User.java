@@ -1,6 +1,6 @@
-package User;
-import Recipe.*;
-import DataBaseHandlers.DbHandlerUser;
+package user;
+import recipe.*;
+import dataBaseHandlers.DbHandlerUser;
 
 import java.util.ArrayList;
 import java.util.List;

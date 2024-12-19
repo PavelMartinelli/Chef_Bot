@@ -1,7 +1,7 @@
-import Message.BaseMessages.*;
-import Message.BaseMessagePhoto.*;
-import Recipe.*;
-import User.*;
+import message.BaseMessages.*;
+import message.BaseMessagePhoto.*;
+import recipe.*;
+import user.*;
 
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;

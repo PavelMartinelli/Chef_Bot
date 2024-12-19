@@ -1,15 +1,14 @@
-package Message.BaseMessages;
+package message.BaseMessages;
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchPromptMessage extends BaseMessage {
-
+public class CatalogMessage extends BaseMessage {
     @Override
     protected String getMessageText() {
-        return "🔍 Введите название блюда для поиска:";
+        return "Вы попали в Каталог. Пока в разработке.";
     }
 
     @Override

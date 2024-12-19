@@ -1,7 +1,6 @@
-package DataBaseHandlers;
+package dataBaseHandlers;
 
-import User.*;
-import org.sqlite.JDBC;
+import user.*;
 
 import java.sql.*;
 import java.util.*;

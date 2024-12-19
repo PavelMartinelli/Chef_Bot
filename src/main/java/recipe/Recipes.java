@@ -1,6 +1,6 @@
-package Recipe;
+package recipe;
 
-import DataBaseHandlers.DbHandlerRecipe;
+import dataBaseHandlers.DbHandlerRecipe;
 
 import java.util.Random;
 

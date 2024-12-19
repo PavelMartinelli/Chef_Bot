@@ -1,7 +1,6 @@
-package DataBaseHandlers;
+package dataBaseHandlers;
 
-import Recipe.Recipe;
-import org.sqlite.JDBC;
+import recipe.Recipe;
 
 import java.sql.*;
 import java.util.*;

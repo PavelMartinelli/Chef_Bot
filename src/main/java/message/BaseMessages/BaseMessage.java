@@ -1,39 +1,31 @@
-package Message.BaseMessagePhoto;
+package message.BaseMessages;
 
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageMedia;
-import org.telegram.telegrambots.meta.api.objects.InputFile;
-import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 
 import java.util.List;
 
-public abstract class BaseMessagePhoto {
+public abstract class BaseMessage {
     protected abstract String getMessageText();
-    protected abstract String getPhotoUrl();
     protected abstract List<InlineKeyboardRow> createKeyboardRows();
 
-    public SendPhoto createMessageWithPhoto(long chatId) {
-        return SendPhoto.builder()
-                .chatId(String.valueOf(chatId))
-                .photo(new InputFile(getPhotoUrl()))
-                .caption(getMessageText())
-                .parseMode("HTML")
+    public SendMessage createMessage(long chatId) {
+        return SendMessage.builder()
+                .chatId(chatId)
+                .text(getMessageText())
                 .replyMarkup(createKeyboard())
                 .build();
     }
 
-    public EditMessageMedia createEditMessageWithPhoto(long chatId, int messageId) {
-        return EditMessageMedia.builder()
+
+    public EditMessageText createEditMessage(long chatId, int messageId) {
+        return EditMessageText.builder()
                 .chatId(String.valueOf(chatId))
                 .messageId(messageId)
-                .media(InputMediaPhoto.builder()
-                        .media(getPhotoUrl())
-                        .caption(getMessageText())
-                        .parseMode("HTML")
-                        .build())
+                .text(getMessageText())
                 .replyMarkup(createKeyboard())
                 .build();
     }

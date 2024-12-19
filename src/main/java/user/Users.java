@@ -1,6 +1,6 @@
-package User;
+package user;
 
-import DataBaseHandlers.DbHandlerUser;
+import dataBaseHandlers.DbHandlerUser;
 import java.util.Map;
 
 public class Users {

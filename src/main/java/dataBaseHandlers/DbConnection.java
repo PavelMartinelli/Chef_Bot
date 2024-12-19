@@ -1,4 +1,4 @@
-package DataBaseHandlers;
+package dataBaseHandlers;
 
 import org.sqlite.JDBC;
 
