@@ -18,7 +18,6 @@ public class MenuMessage extends BaseMessage {
         rows.add(createRow("🍳 Поиск по ингредиентам", "/search_by_ingredients"));
         rows.add(createRow("🎲 Случайный рецепт", "/random"));
         rows.add(createRow("❤️ Избранное", "/wishlist"));
-        rows.add(createRow("📚 Каталог", "/catalog"));
         rows.add(createRow("❓ Справка", "/help"));
         return rows;
     }
