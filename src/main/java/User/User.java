@@ -21,6 +21,8 @@ public class User {
         this.userName = userName;
         this.password = password;
         state = States.START;
+        searchQuery = "";
+        selectedIngredients = new ArrayList<>();
         idFavoritesRecipe = new ArrayList<>();
     }
 
