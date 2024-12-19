@@ -11,7 +11,7 @@ public class Main {
 
         try (TelegramBotsLongPollingApplication botsApplication = new TelegramBotsLongPollingApplication()) {
             botsApplication.registerBot(botToken, new Bot(botToken));
-            System.out.println("Mix & Cook successfully started!");
+            System.out.println("Chef_Bot successfully started!");
             Thread.currentThread().join();
         } catch (Exception e) {
             e.printStackTrace();
