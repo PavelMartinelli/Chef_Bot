@@ -1,4 +1,4 @@
-package com.github.PavelAnton.Chef_Bot.message.BaseMessages;
+package com.github.PavelAnton.Chef_Bot.message.baseMessages;
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 

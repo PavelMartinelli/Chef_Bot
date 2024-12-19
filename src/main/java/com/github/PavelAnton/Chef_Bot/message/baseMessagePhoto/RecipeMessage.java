@@ -1,4 +1,4 @@
-package com.github.PavelAnton.Chef_Bot.message.BaseMessagePhoto;
+package com.github.PavelAnton.Chef_Bot.message.baseMessagePhoto;
 
 import com.github.PavelAnton.Chef_Bot.recipe.Recipe;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
