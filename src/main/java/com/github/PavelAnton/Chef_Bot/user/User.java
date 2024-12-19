@@ -1,6 +1,7 @@
-package User;
-import Recipe.*;
-import DataBaseHandlers.DbHandlerUser;
+package com.github.PavelAnton.Chef_Bot.user;
+import com.github.PavelAnton.Chef_Bot.recipe.Recipe;
+import com.github.PavelAnton.Chef_Bot.recipe.Recipes;
+import com.github.PavelAnton.Chef_Bot.dataBaseHandlers.DbHandlerUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,6 @@ public class User {
         START,
         AWAITING_SEARCH_RECIPE_NAME,
         AWAITING_SEARCH_RECIPE_INGREDIENTS,
-        COMPLETED,
         UNDEFINED
     }
     public void setState(States state) {

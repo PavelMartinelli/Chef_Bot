@@ -1,6 +1,6 @@
-package Recipe;
+package com.github.PavelAnton.Chef_Bot.recipe;
 
-import DataBaseHandlers.DbHandlerRecipe;
+import com.github.PavelAnton.Chef_Bot.dataBaseHandlers.DbHandlerRecipe;
 
 import java.util.Random;
 
@@ -12,16 +12,8 @@ public class Recipes {
     private final Map<Integer, Recipe> recipesDictonary;
     private final DbHandlerRecipe dbHandlerRecipe = DbHandlerRecipe.getInstance();
 
-    public Recipes(Map<Integer, Recipe> recipesDictonary) { //Конструктор без БД
-        this.recipesDictonary = recipesDictonary;
-    }
-
     public Recipes() { // Конструктор с БД
         this.recipesDictonary = dbHandlerRecipe.getALL();
-    }
-
-    public int getSize() {
-        return recipesDictonary.size();
     }
 
     public Recipe getRecipe(Integer id) {
@@ -36,16 +28,6 @@ public class Recipes {
         return recipesDictonary.get(randomKey);
     }
 
-    public void addRecipe(Recipe recipe) {
-        recipesDictonary.put(recipe.getId(), recipe);
-        dbHandlerRecipe.add(recipe);
-    }
-
-    public void deleteRecipe(Integer id) {
-        recipesDictonary.remove(id);
-
-        dbHandlerRecipe.delete(id);
-    }
 
     public List<String> getAllIngredients() {
         return List.of(

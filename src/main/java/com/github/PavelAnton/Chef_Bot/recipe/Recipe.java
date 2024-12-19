@@ -1,10 +1,4 @@
-package Recipe;
-
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.objects.InputFile;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
+package com.github.PavelAnton.Chef_Bot.recipe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,14 +13,6 @@ public class Recipe {
 
     public Recipe(Integer id, String title, String description, String url_photo, ArrayList<String> ingredients) {
         this.id = id;
-        this.title = title;
-        this.description = description;
-        this.url_photo = url_photo;
-        this.ingredients = ingredients;
-    }
-
-    public Recipe(String title, String description, String url_photo, List<String> ingredients) {
-        this.id = title.hashCode();
         this.title = title;
         this.description = description;
         this.url_photo = url_photo;

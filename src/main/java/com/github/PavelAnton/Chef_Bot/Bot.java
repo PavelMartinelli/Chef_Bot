@@ -1,7 +1,12 @@
-import Message.BaseMessages.*;
-import Message.BaseMessagePhoto.*;
-import Recipe.*;
-import User.*;
+package com.github.PavelAnton.Chef_Bot;
+
+import com.github.PavelAnton.Chef_Bot.message.BaseMessagePhoto.BaseMessagePhoto;
+import com.github.PavelAnton.Chef_Bot.message.BaseMessagePhoto.RecipeMessage;
+import com.github.PavelAnton.Chef_Bot.message.BaseMessages.*;
+import com.github.PavelAnton.Chef_Bot.recipe.Recipe;
+import com.github.PavelAnton.Chef_Bot.recipe.Recipes;
+import com.github.PavelAnton.Chef_Bot.user.User;
+import com.github.PavelAnton.Chef_Bot.user.Users;
 
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
@@ -80,7 +85,7 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
 
         User currentUser = users.getUser(userId);
 
-        if ("/search".equals(messageText) ||
+        if (    "/search".equals(messageText) ||
                 "/start".equals(messageText) ||
                 "/help".equals(messageText) ||
                 "/catalog".equals(messageText) ||
@@ -120,6 +125,7 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
                 break;
         }
     }
+
     private void handleRecipeSearch(String messageText, long chatId, User user) {
         List<Recipe> results = recipes.searchRecipes(messageText);
         user.setSearchQuery(messageText);
@@ -143,17 +149,23 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
 
         User currentUser = users.getUser(userId);
 
-        if (callbackData.startsWith("/add_favourites$") ||
+        if (    callbackData.startsWith("/add_favourites$") ||
                 callbackData.startsWith("/del_favourites$") ||
                 callbackData.startsWith("/view_recipe$") ||
                 callbackData.startsWith("/search_page$") ||
                 callbackData.startsWith("/ingredients_page$")) {
             handleActionParameterInt(callbackData, currentUser, chatId, messageId);
-        } else if (callbackData.startsWith("/toggle_ingredient$")) {
+        }
+
+        else if (callbackData.startsWith("/toggle_ingredient$")) {
             handleActionParameterStr(callbackData, currentUser, chatId, messageId);
-        } else if (callbackData.equals("/search_recipes")) {
+        }
+
+        else if (callbackData.equals("/search_recipes")) {
             handleActionCommand(callbackData, currentUser, chatId, messageId);
-        } else {
+        }
+
+        else {
             handleMenuActions(callbackData, userId, chatId, messageId, currentUser);
         }
 
@@ -169,36 +181,52 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
 
     private void handleActionParameterInt(String callbackData, User user, long chatId, int messageId) {
         int actionParameter = Integer.parseInt(callbackData.split("\\$")[1]);
+
         if (callbackData.startsWith("/search_page$")) {
             editMessage(new SearchResultsMessage(recipes.searchRecipes(user.getSearchQuery()), actionParameter), chatId, messageId);
-        } else if (callbackData.startsWith("/ingredients_page$")) {
+        }
+
+        else if (callbackData.startsWith("/ingredients_page$")) {
             editMessage(new SearchIngredientsMessage(recipes.getAllIngredients(), user.getSelectedIngredients(), actionParameter), chatId, messageId);
-        } else if (callbackData.startsWith("/add_favourites$")) {
+        }
+
+        else if (callbackData.startsWith("/add_favourites$")) {
             user.addFavoritesRecipe(actionParameter);
             editMessageWithPhoto(new RecipeMessage(recipes.getRecipe(actionParameter), true), chatId, messageId);
-        } else if (callbackData.startsWith("/del_favourites$")) {
+        }
+
+        else if (callbackData.startsWith("/del_favourites$")) {
             user.removeFavoritesRecipe(actionParameter);
             editMessageWithPhoto(new RecipeMessage(recipes.getRecipe(actionParameter), false), chatId, messageId);
-        } else if (callbackData.startsWith("/view_recipe$")) {
+        }
+
+        else if (callbackData.startsWith("/view_recipe$")) {
             user.setSearchQuery(null);
             user.setSelectedIngredients(null);
             Recipe recipe = recipes.getRecipe(actionParameter);
             editMessageWithPhoto(new RecipeMessage(recipe, user.isRecipeInFavorites(recipe)), chatId, messageId);
         }
     }
+
     private void handleActionParameterStr(String callbackData, User user, long chatId, int messageId) {
         String actionParameter = callbackData.split("\\$")[1];
+
         if (callbackData.startsWith("/toggle_ingredient$")) {
             List<String> selectedIngredients = user.getSelectedIngredients();
+
             if (selectedIngredients.contains(actionParameter)) {
                 selectedIngredients.remove(actionParameter);
-            } else {
+            }
+
+            else {
                 selectedIngredients.add(actionParameter);
             }
+
             List<String> allIngredients = recipes.getAllIngredients();
             editMessage(new SearchIngredientsMessage(allIngredients, selectedIngredients, 0), chatId, messageId);
         }
     }
+
     private void handleActionCommand(String callbackData, User user, long chatId, int messageId) {
         if (callbackData.equals("/search_recipes")){
             List<String> selectedIngredients = user.getSelectedIngredients();
@@ -206,6 +234,7 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
             editMessage(new SearchResultsMessage(results, 0), chatId, messageId);
         }
     }
+
     private void handleMenuActions(String callbackData, long userId, long chatId, int messageId, User currentUser) {
         switch (callbackData) {
             case "/start":
@@ -238,5 +267,4 @@ public class Bot implements LongPollingSingleThreadUpdateConsumer {
                 break;
         }
     }
-
 }

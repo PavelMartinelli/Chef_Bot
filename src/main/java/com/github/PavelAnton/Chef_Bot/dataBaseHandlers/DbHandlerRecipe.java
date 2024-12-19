@@ -1,7 +1,6 @@
-package DataBaseHandlers;
+package com.github.PavelAnton.Chef_Bot.dataBaseHandlers;
 
-import Recipe.Recipe;
-import org.sqlite.JDBC;
+import com.github.PavelAnton.Chef_Bot.recipe.Recipe;
 
 import java.sql.*;
 import java.util.*;
@@ -32,7 +31,7 @@ public class  DbHandlerRecipe  {
 
     public Map<Integer, Recipe> getALL() {
         try (Statement statement = connection.createStatement()) {
-            Map<Integer, Recipe> recipesDictonary = new HashMap<>();
+            Map<Integer, Recipe> recipesDictionary = new HashMap<>();
 
             ResultSet resultSet = statement.executeQuery("SELECT id, title, description, " +
                     "url_photo, ingredients FROM Recipes");
@@ -41,7 +40,7 @@ public class  DbHandlerRecipe  {
                 ArrayList<String> ingredients_from_bd =
                         new ArrayList<>(Arrays.asList(resultSet.getString("ingredients").split(",")));
 
-                recipesDictonary.put(resultSet.getInt("id"),
+                recipesDictionary.put(resultSet.getInt("id"),
                         new Recipe(resultSet.getInt("id"),
                                 resultSet.getString("title"),
                                 resultSet.getString("description"),
@@ -49,7 +48,7 @@ public class  DbHandlerRecipe  {
                                 ingredients_from_bd));
             }
 
-            return recipesDictonary;
+            return recipesDictionary;
 
         } catch (SQLException e) {
             e.printStackTrace();

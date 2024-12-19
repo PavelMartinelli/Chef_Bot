@@ -1,4 +1,4 @@
-package DataBaseHandlers;
+package com.github.PavelAnton.Chef_Bot.dataBaseHandlers;
 
 import org.sqlite.JDBC;
 

@@ -1,16 +1,15 @@
-package Message.BaseMessages;
+package com.github.PavelAnton.Chef_Bot.message.BaseMessages;
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HelpMessage extends BaseMessage {
+public class SearchPromptMessage extends BaseMessage {
+
     @Override
     protected String getMessageText() {
-        return "🤖 Это бот для приготовления всяких блюд.\n" +
-                "\nℹ Информация по всем функциям бота доступна по команде /start\n" +
-                "\n Подробная инструкция будет потом\n";
+        return "🔍 Введите название блюда для поиска:";
     }
 
     @Override

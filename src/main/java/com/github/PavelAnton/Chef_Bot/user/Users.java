@@ -1,6 +1,6 @@
-package User;
+package com.github.PavelAnton.Chef_Bot.user;
 
-import DataBaseHandlers.DbHandlerUser;
+import com.github.PavelAnton.Chef_Bot.dataBaseHandlers.DbHandlerUser;
 import java.util.Map;
 
 public class Users {

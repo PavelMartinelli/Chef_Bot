@@ -1,4 +1,6 @@
-import Token.Tg_Token;
+package com.github.PavelAnton.Chef_Bot;
+
+import com.github.PavelAnton.Chef_Bot.token.Tg_Token;
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
 
 public class Main {
@@ -9,7 +11,7 @@ public class Main {
 
         try (TelegramBotsLongPollingApplication botsApplication = new TelegramBotsLongPollingApplication()) {
             botsApplication.registerBot(botToken, new Bot(botToken));
-            System.out.println("Mix & Cook successfully started!");
+            System.out.println("Chef_Bot successfully started!");
             Thread.currentThread().join();
         } catch (Exception e) {
             e.printStackTrace();
