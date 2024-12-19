@@ -32,7 +32,7 @@ public class DbHandlerUser {
 
     public Map<Long, User> getALL() {
         try (Statement statement = connection.createStatement()) {
-            Map<Long, User> userDictonary = new HashMap<>();
+            Map<Long, User> userDictionary = new HashMap<>();
 
             ResultSet resultSet = statement.executeQuery("SELECT id, userName, password, idFavoritesRecipe FROM Users");
 
@@ -45,7 +45,7 @@ public class DbHandlerUser {
                         resultSet.getString("idFavoritesRecipe").equals(" ") ||
                         resultSet.getString("idFavoritesRecipe").isEmpty()) {
                     User user = new User(id, userName, password);
-                    userDictonary.put(id, user);
+                    userDictionary.put(id, user);
                 }
                 else {
                     ArrayList<String> idRecipes_from_bd_str =
@@ -57,12 +57,12 @@ public class DbHandlerUser {
                     }
 
                     User user = new User(id, userName, password, idRecipes_from_bd_int);
-                    userDictonary.put(id, user);
+                    userDictionary.put(id, user);
                 }
 
             }
 
-            return userDictonary;
+            return userDictionary;
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -72,8 +72,6 @@ public class DbHandlerUser {
     }
 
     public void add(User user)  {
-
-
         try (PreparedStatement statement = connection.prepareStatement(
                 "INSERT INTO Users(`id`, `userName`, `password`, `idFavoritesRecipe`) " +
                         "VALUES(?, ?, ?, ?)")) {
