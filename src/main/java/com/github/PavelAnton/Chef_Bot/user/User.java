@@ -42,7 +42,6 @@ public class User {
         START,
         AWAITING_SEARCH_RECIPE_NAME,
         AWAITING_SEARCH_RECIPE_INGREDIENTS,
-        COMPLETED,
         UNDEFINED
     }
     public void setState(States state) {

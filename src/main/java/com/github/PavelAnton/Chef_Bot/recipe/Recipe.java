@@ -19,14 +19,6 @@ public class Recipe {
         this.ingredients = ingredients;
     }
 
-    public Recipe(String title, String description, String url_photo, List<String> ingredients) {
-        this.id = title.hashCode();
-        this.title = title;
-        this.description = description;
-        this.url_photo = url_photo;
-        this.ingredients = ingredients;
-    }
-
     public Integer getId() {
         return id;
     }
