@@ -10,6 +10,8 @@ public class User {
     private String userName;
     private String password;
     private States state;
+    private String searchQuery;
+    private List<String> selectedIngredients;
     private ArrayList<Integer> idFavoritesRecipe;
 
     private final DbHandlerUser dbHandlerUser = DbHandlerUser.getInstance();
@@ -19,6 +21,8 @@ public class User {
         this.userName = userName;
         this.password = password;
         state = States.START;
+        searchQuery = "";
+        selectedIngredients = new ArrayList<>();
         idFavoritesRecipe = new ArrayList<>();
     }
 
@@ -27,22 +31,16 @@ public class User {
         this.userName = userName;
         this.password = password;
         state = States.START;
+        searchQuery = "";
+        selectedIngredients = new ArrayList<>();
         this.idFavoritesRecipe = idFavoritesRecipe;
     }
 
 
     public enum States {
         START,
-        UNREGISTERED,
-        LOGIN,
-        AWAITING_NAME,
-        AWAITING_PASSWORD,
         AWAITING_SEARCH_RECIPE_NAME,
         AWAITING_SEARCH_RECIPE_INGREDIENTS,
-        AWAITING_NEW_RECIPE_NAME,
-        AWAITING_NEW_RECIPE_NAME_DESCRIPTION,
-        AWAITING_NEW_RECIPE_NAME_PHOTO,
-        AWAITING_NEW_RECIPE_INGREDIENTS,
         COMPLETED,
         UNDEFINED
     }
@@ -87,6 +85,22 @@ public class User {
 
         }
         return favoriteRecipes;
+    }
+
+    public String getSearchQuery() {
+        return searchQuery;
+    }
+
+    public void setSearchQuery(String searchQuery) {
+        this.searchQuery = searchQuery != null ? searchQuery : "";
+    }
+
+    public List<String> getSelectedIngredients() {
+        return selectedIngredients;
+    }
+
+    public void setSelectedIngredients(List<String> selectedIngredients) {
+        this.selectedIngredients = selectedIngredients != null ? selectedIngredients : new ArrayList<>();
     }
 
     public boolean isRecipeInFavorites(Recipe recipe) {

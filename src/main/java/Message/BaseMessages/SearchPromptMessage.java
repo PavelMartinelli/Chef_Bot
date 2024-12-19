@@ -9,13 +9,13 @@ public class SearchPromptMessage extends BaseMessage {
 
     @Override
     protected String getMessageText() {
-        return "Введите название блюда или ингредиент для поиска:";
+        return "🔍 Введите название блюда для поиска:";
     }
 
     @Override
     protected List<InlineKeyboardRow> createKeyboardRows() {
         List<InlineKeyboardRow> rows = new ArrayList<>();
-        rows.add(createRow("На главное меню", "/back"));
+        rows.add(createRow("🏠 На главное меню", "/back"));
         return rows;
     }
 }

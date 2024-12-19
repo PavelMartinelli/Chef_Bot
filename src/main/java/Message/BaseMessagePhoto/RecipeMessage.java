@@ -1,7 +1,6 @@
 package Message.BaseMessagePhoto;
 
 import Recipe.Recipe;
-
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 
 import java.util.ArrayList;
@@ -18,9 +17,10 @@ public class RecipeMessage extends BaseMessagePhoto {
 
     @Override
     protected String getMessageText() {
-        return "<b>" + recipe.getTitle() + "</b>\n\n" +
-                recipe.getDescription() + "\n\n" +
-                "Ингредиенты:\n" + String.join("\n", recipe.getIngredients());
+        return "<b>🍽️ " + recipe.getTitle() + "</b>\n\n" +
+                "📝 <i>" + recipe.getDescription() + "</i>\n\n" +
+                "🛒 <b>Ингредиенты:</b>\n" +
+                "<pre> " + String.join("\n", recipe.getIngredients()) + "</pre>";
     }
 
     @Override
@@ -32,10 +32,10 @@ public class RecipeMessage extends BaseMessagePhoto {
     protected List<InlineKeyboardRow> createKeyboardRows() {
         List<InlineKeyboardRow> rows = new ArrayList<>();
         rows.add(createRow(
-                isInFavourites ? "Удалить из избранного" : "Добавить в избранное",
+                isInFavourites ? "❌ Удалить из избранного" : "❤️ Добавить в избранное",
                 (isInFavourites ? "/del_favourites$" : "/add_favourites$") + recipe.getId()
         ));
-        rows.add(createRow("На главное меню", "/start"));
+        rows.add(createRow("🏠 На главное меню", "/start"));
         return rows;
     }
 }

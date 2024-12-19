@@ -1,6 +1,7 @@
 package Recipe;
 
 import DataBaseHandlers.DbHandlerRecipe;
+
 import java.util.Random;
 
 import java.util.Map;
@@ -15,11 +16,11 @@ public class Recipes {
         this.recipesDictonary = recipesDictonary;
     }
 
-    public Recipes()  { // Конструктор с БД
+    public Recipes() { // Конструктор с БД
         this.recipesDictonary = dbHandlerRecipe.getALL();
     }
 
-    public int getSize(){
+    public int getSize() {
         return recipesDictonary.size();
     }
 
@@ -35,26 +36,52 @@ public class Recipes {
         return recipesDictonary.get(randomKey);
     }
 
-    public void addRecipe(Recipe recipe)  {
+    public void addRecipe(Recipe recipe) {
         recipesDictonary.put(recipe.getId(), recipe);
         dbHandlerRecipe.add(recipe);
     }
 
-    public void deleteRecipe(Integer id)  {
+    public void deleteRecipe(Integer id) {
         recipesDictonary.remove(id);
 
         dbHandlerRecipe.delete(id);
+    }
+
+    public List<String> getAllIngredients() {
+        return List.of(
+                "лук",
+                "томаты",
+                "чеснок",
+                "креветки",
+                "сыр",
+                "лимон",
+                "огурцы"
+        );
     }
 
     public List<Recipe> searchRecipes(String query) {
         List<Recipe> results = new ArrayList<>();
 
         for (Recipe recipe : recipesDictonary.values()) {
-            if (recipe.getTitle().toLowerCase().contains(query.toLowerCase()) ||
-                    recipe.getIngredients().stream().anyMatch(ingredient -> ingredient.toLowerCase().contains(query.toLowerCase()))) {
+            if (recipe.getTitle().toLowerCase().contains(query.toLowerCase())) {
                 results.add(recipe);
             }
         }
         return results;
     }
+
+    public List<Recipe> searchRecipesByIngredients(List<String> ingredients) {
+        List<Recipe> results = new ArrayList<>();
+
+        for (Recipe recipe : recipesDictonary.values()) {
+            if (ingredients.stream()
+                    .allMatch(ingredient -> recipe.getIngredients().stream()
+                            .anyMatch(recipeIngredient -> recipeIngredient.contains(ingredient)))) {
+                results.add(recipe);
+            }
+        }
+
+        return results;
+    }
+
 }

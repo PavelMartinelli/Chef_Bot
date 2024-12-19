@@ -14,11 +14,11 @@ public class MenuMessage extends BaseMessage {
     @Override
     protected List<InlineKeyboardRow> createKeyboardRows() {
         List<InlineKeyboardRow> rows = new ArrayList<>();
-        rows.add(createRow("Поиск блюд, напитков", "/search"));
-        rows.add(createRow("Случайный рецепт", "/random"));
-        rows.add(createRow("Избранное", "/wishlist"));
-        rows.add(createRow("Каталог", "/catalog"));
-        rows.add(createRow("Справка", "/help"));
+        rows.add(createRow("🔍 Поиск блюд", "/search"));
+        rows.add(createRow("🍳 Поиск по ингредиентам", "/search_by_ingredients"));
+        rows.add(createRow("🎲 Случайный рецепт", "/random"));
+        rows.add(createRow("❤️ Избранное", "/wishlist"));
+        rows.add(createRow("❓ Справка", "/help"));
         return rows;
     }
 }

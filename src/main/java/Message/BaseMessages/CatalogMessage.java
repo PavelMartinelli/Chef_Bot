@@ -14,7 +14,7 @@ public class CatalogMessage extends BaseMessage {
     @Override
     protected List<InlineKeyboardRow> createKeyboardRows() {
         List<InlineKeyboardRow> rows = new ArrayList<>();
-        rows.add(createRow("На главное меню", "/back"));
+        rows.add(createRow("🏠 На главное меню", "/back"));
         return rows;
     }
 }
