@@ -9,7 +9,7 @@ import java.util.List;
 public class SearchIngredientsMessage extends BaseMessage {
     private final List<String> ingredients;
     private final List<String> selectedIngredients;
-    private final int ingredientsPerPage = 6;
+    private final int ingredientsPerPage = 4;
     private final int currentPage;
 
     public SearchIngredientsMessage(List<String> ingredients, List<String> selectedIngredients, int currentPage) {
@@ -35,7 +35,7 @@ public class SearchIngredientsMessage extends BaseMessage {
             String buttonText = selectedIngredients.contains(ingredient)
                     ? ingredient + " ✅"
                     : ingredient;
-            rows.add(createRow(buttonText, "/toggle_ingredient$" + ingredient));
+            rows.add(createRow(buttonText.substring(0, 1).toUpperCase() + buttonText.substring(1), "/toggle_ingredient$" + ingredient));
         }
 
         InlineKeyboardRow navigationRow = new InlineKeyboardRow();
