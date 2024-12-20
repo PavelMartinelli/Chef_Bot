@@ -29,7 +29,7 @@ public class Recipes {
     }
 
 
-    public List<String> getAllIngredients() {
+    public static List<String> getAllIngredients() {
         return List.of(
                 "лук",
                 "томаты",
@@ -37,7 +37,14 @@ public class Recipes {
                 "креветки",
                 "сыр",
                 "лимон",
-                "огурцы"
+                "огурцы",
+                "яйца",
+                "рис",
+                "говяжий фарш",
+                "куриное филе",
+                "картофель",
+                "морковь",
+                "оливковое масло "
         );
     }
 
